@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+//NavBar from components
+import Navbar from "./components/navbar";
+import "./App.css";
+//inital data for lists and tasks the raplaced with API data later
+const initialState = {
+  lists: [
+    {
+      id: 1, //id of the list
+      name: "graphics", //name of the list
+      tasks: [
+        //tasks on that list
+        {
+          id: 1,
+          name: "Design logo",
+          priority: "High",
+          date: "2025-04-06",
+          keywords: ["design", "logo"],
+          status: "todo",
+        },
+        {
+          id: 2,
+          name: "Create banner",
+          priority: "Medium",
+          date: "2025-04-07",
+          keywords: ["design", "banner"],
+          status: "doing",
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "programming",
+      tasks: [
+        {
+          id: 3,
+          name: "Fix bugs",
+          priority: "Low",
+          date: "2025-04-05",
+          keywords: ["code", "bugs"],
+          status: "done",
+        },
+      ],
+    },
+  ],
+};
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
+  const [lists, setLists] = useState(initialState.lists);
+  const [selectedList, setSelectedList] = useState(lists[0]);
+  const [searchQuery, setSearchQuery] = useState("");// searchQuery => رايح للListview او للي هيعرض الtask علشان يظهرله علي طول 
+  //the function to handle add a new task
+  const handleAddTask = (newTask) => {
+    const updatedLists = lists.map((list) => {
+      if (list.id === selectedList.id) {
+        return { ...list, tasks: [...list.tasks, newTask] };
+      }
+      return list;
+    });
+    setLists(updatedLists);
+    setSelectedList(updatedLists.find((list) => list.id === selectedList.id));
+  };
+// لو عايز تخلي البحث يشتغل في اي جزئية في الموقع حط الprop بتاع searchQuery في Component اللي عايزها
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app">
+      <Navbar
+        setSearchQuery={setSearchQuery} //بيروح من Navbar الي SearchBar علشان يهندل البحث
+        handleAddTask={handleAddTask} // دي props بتروح من Navbar الي AddTaskModal علشان تضيف task جديدة
+      />
+    </div>
+  );
+};
 
-export default App
+export default App;
