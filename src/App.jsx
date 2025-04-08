@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 //NavBar from components
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar/navBar";
 import "./App.css";
+import Table from "./components/Table/Table";
 //inital data for lists and tasks the raplaced with API data later
 const initialState = {
   lists: [
@@ -67,6 +68,7 @@ const App = () => {
         setSearchQuery={setSearchQuery} //بيروح من Navbar الي SearchBar علشان يهندل البحث
         handleAddTask={handleAddTask} // دي props بتروح من Navbar الي AddTaskModal علشان تضيف task جديدة
       />
+      <Table />
     </div>
   );
 };

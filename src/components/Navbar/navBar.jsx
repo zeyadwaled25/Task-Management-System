@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 //logo from the internet availble to change
-import logo from "../assets/management_12572978.png";
+import logo from "../../assets/management_12572978.png";
 //search bar component
 import SearchBar from "./SearchBar";
 //importing the add task modal
@@ -12,7 +12,7 @@ const Navbar = ({ setSearchQuery, handleAddTask }) => {
   //state to show or hide the modal
   const [showModal, setShowModal] = useState(false);
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <a className="navbar-brand fw-bold fs-5" href="#">
           <img
