@@ -1,10 +1,15 @@
 // src/components/Sidebar/Sidebar.jsx
 import React from "react";
-import { Kanban, HouseDoor, ListTask, PlusCircle } from "react-bootstrap-icons";
+import {
+  Kanban,
+  HouseDoor,
+  ListTask,
+  PlusCircle,
+  EyeFill,
+  EyeSlash,
+} from "react-bootstrap-icons";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
-import hideSidebarIcon from "../../assets/hideSidebarIcon.svg";
-import showSidebarIcon from "../../assets/showSidebarIcon.svg";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   // لو السايدبار مقفول، نعرض زر Show (العين)
@@ -24,11 +29,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         }}
         onClick={toggleSidebar}
       >
-        <img
-          src={showSidebarIcon}
-          alt="Show Sidebar"
-          style={{ width: "24px", filter: "invert(1)" }}
-        />
+        <EyeFill />
       </div>
     );
   }
@@ -103,11 +104,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           fontSize: "0.9rem",
         }}
       >
-        <img
-          src={hideSidebarIcon}
-          alt="Hide Sidebar"
-          style={{ width: 20, marginRight: 8 }}
-        />
+        <EyeSlash className="mx-1"/>
         <span>Hide Sidebar</span>
       </div>
     </div>

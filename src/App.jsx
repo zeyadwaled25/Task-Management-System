@@ -70,7 +70,7 @@ const App = () => {
     setSelectedList(updatedLists.find((list) => list.id === selectedList.id));
     setShowModal(false);
     navigate("/");
-     // يرجع للداشبورد بعد إضافة
+    // يرجع للداشبورد بعد إضافة
   };
 
   return (
@@ -107,4 +107,3 @@ const App = () => {
 };
 
 export default App;
-
