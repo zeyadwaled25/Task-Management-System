@@ -4,7 +4,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 //logo from the internet availble to change
 import logo from "../../assets/management_12572978.png";
 //search bar component
-import SearchBar from "./SearchBar";
+import SearchBar from "./searchBar";
 //importing the add task modal
 import AddTaskModal from "./addTaskModal";
 
