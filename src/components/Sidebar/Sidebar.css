@@ -1,0 +1,15 @@
+
+.nav-link:hover {
+  background-color: #0d6efd;
+  color: white !important;
+}
+.sidebar {
+  width: 220px;
+  transition: all 0.3s ease;
+}
+.sidebar.collapsed {
+  width: 70px;
+}
+.sidebar .btn {
+  font-size: 0.8rem;
+}

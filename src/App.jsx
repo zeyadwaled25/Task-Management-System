@@ -1,16 +1,24 @@
 import React, { useState } from "react";
-//NavBar from components
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar/navBar";
-import "./App.css";
+import Sidebar from "./components/Sidebar/Sidebar";
 import Table from "./components/Table/Table";
-//inital data for lists and tasks the raplaced with API data later
-const initialState = {
-  lists: [
+import AddTaskModal from "./components/Navbar/addTaskModal"; // لصفحة Create
+import "./App.css";
+
+// صفحات إضافية
+const ManageTasks = () => (
+  <div className="p-4">
+    <h2>Manage Tasks</h2>
+  </div>
+);
+
+const App = () => {
+  const [lists, setLists] = useState([
     {
-      id: 1, //id of the list
-      name: "graphics", //name of the list
+      id: 1,
+      name: "graphics",
       tasks: [
-        //tasks on that list
         {
           id: 1,
           name: "Design logo",
@@ -43,34 +51,60 @@ const initialState = {
         },
       ],
     },
-  ],
-};
+  ]);
 
-const App = () => {
-  const [lists, setLists] = useState(initialState.lists);
   const [selectedList, setSelectedList] = useState(lists[0]);
-  const [searchQuery, setSearchQuery] = useState("");// searchQuery => رايح للListview او للي هيعرض الtask علشان يظهرله علي طول 
-  //the function to handle add a new task
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const navigate = useNavigate();
+
   const handleAddTask = (newTask) => {
-    const updatedLists = lists.map((list) => {
-      if (list.id === selectedList.id) {
-        return { ...list, tasks: [...list.tasks, newTask] };
-      }
-      return list;
-    });
+    const updatedLists = lists.map((list) =>
+      list.id === selectedList.id
+        ? { ...list, tasks: [...list.tasks, newTask] }
+        : list
+    );
     setLists(updatedLists);
     setSelectedList(updatedLists.find((list) => list.id === selectedList.id));
+    setShowModal(false);
+    navigate("/");
+     // يرجع للداشبورد بعد إضافة
   };
-// لو عايز تخلي البحث يشتغل في اي جزئية في الموقع حط الprop بتاع searchQuery في Component اللي عايزها
+
   return (
     <div className="app">
-      <Navbar
-        setSearchQuery={setSearchQuery} //بيروح من Navbar الي SearchBar علشان يهندل البحث
-        handleAddTask={handleAddTask} // دي props بتروح من Navbar الي AddTaskModal علشان تضيف task جديدة
-      />
-      <Table />
+      <div className="d-flex">
+        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="flex-grow-1">
+          <Navbar
+            setSearchQuery={setSearchQuery}
+            handleAddTask={() => setShowModal(true)} // هيفتح المودال
+          />
+
+          <Routes>
+            <Route path="/" element={<Table tasks={selectedList.tasks} />} />
+            <Route path="/manage" element={<ManageTasks />} />
+            <Route
+              path="/create"
+              element={
+                <AddTaskModal
+                  show={false}
+                  onClose={() => {
+                    setShowModal(false);
+                    navigate("/");
+                  }}
+                  onAddTask={handleAddTask}
+                />
+              }
+            />
+          </Routes>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default App;
+
