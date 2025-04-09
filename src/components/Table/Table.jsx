@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Filter from "./Filter";
 import "./Table.css";
+import { Eye, SquarePen, Trash2 } from "lucide-react";
 
 function Table() {
   const [tasks, setTasks] = useState([
@@ -70,9 +71,9 @@ function Table() {
               <th>Priority</th>
               <th>Status</th>
               <th>Date</th>
-              <th>View</th>
-              <th>Edit</th>
-              <th>Delete</th>
+              <th className="text-center">View</th>
+              <th className="text-center">Edit</th>
+              <th className="text-center">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -97,9 +98,9 @@ function Table() {
                 </td>
                 <td>{task.status}</td>
                 <td>{task.date}</td>
-                <td><button type="button" className="btn btn-primary">View</button></td>
-                <td><button type="button" className="btn btn-secondary">Edit</button></td>
-                <td><button type="button" className="btn btn-danger">Delete</button></td>
+                <td className="text-center"><button type="button" className="btn btn-primary"><Eye /></button></td>
+                <td className="text-center"><button type="button" className="btn btn-warning"><SquarePen /></button></td>
+                <td className="text-center"><button type="button" className="btn btn-danger"><Trash2 /></button></td>
               </tr>
             ))}
           </tbody>
