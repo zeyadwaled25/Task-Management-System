@@ -59,7 +59,7 @@ function Filter({ filterOptions, setFilterOptions }) {
 
   return (
     <div className="filter mb-4">
-      <h3 className="title mb-3">Filter</h3>
+      <h3 className="title mb-3">Dashboard</h3>
       <div className="row">
         {Object.keys(dropdownOptions).map(menu => (
           <div className="col-md-4 mb-3" key={menu}>

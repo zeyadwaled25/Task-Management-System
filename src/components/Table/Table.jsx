@@ -1,34 +1,37 @@
 import { useState } from "react";
 import Filter from "./Filter";
 import "./Table.css";
-import { EyeFill,PencilSquare, TrashFill } from "react-bootstrap-icons";
+import { Grid3x3Gap, ListUl, ThreeDotsVertical } from "react-bootstrap-icons";
 
 function Table() {
   const [tasks, setTasks] = useState([
     {
       id: 1,
-      name: "Task 1",
+      name: "Complete project proposal",
       priority: "High",
       status: "Pending",
-      date: "2025-04-01",
+      date: "01-04-2025",
+      gategory: "Marketing",  
       selected: false,
     },
     {
       id: 2,
-      name: "Task 2",
+      name: "Review code changes",
       priority: "Medium",
       status: "In Progress",
-      date: "2025-04-02",
+      date: "02-04-2025",
+      gategory: "Development",
       selected: false,
     },
     {
       id: 3,
-      name: "Task 3",
+      name: "Update documentation",
       priority: "Low",
       status: "Done",
-      date: "2025-04-03",
+      date: "03-04-2025",
+      gategory: "Documentation",
       selected: false,
-    },
+    }
   ]);
 
   const [filterOptions, setFilterOptions] = useState({
@@ -38,11 +41,9 @@ function Table() {
   });
 
   const handleCheckboxChange = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, selected: !task.selected } : task
-      )
-    );
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, selected: !task.selected } : task
+    ));
   };
 
   const filteredTasks = tasks
@@ -69,96 +70,74 @@ function Table() {
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
       />
-      <div className="table-responsive">
-        <table className="table table-bordered">
-          <thead>
-            <tr className="table-light">
-              <th></th>
-              <th>Name</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th className="text-center">View</th>
-              <th className="text-center">Edit</th>
-              <th className="text-center">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTasks.map((task) => (
-              <tr key={task.id} className={task.selected ? "table-active" : ""}>
-                <td>
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={task.selected}
-                    onChange={() => handleCheckboxChange(task.id)}
-                  />
-                </td>
-                <td>{task.name}</td>
-                <td>
-                  <span
-                    className={`badge ${
-                      task.priority === "High"
-                        ? "bg-danger"
-                        : task.priority === "Medium"
-                        ? "bg-warning"
-                        : "bg-info"
-                    }`}
-                  >
-                    {task.priority}
-                  </span>
-                </td>
-                <td>{task.status}</td>
-                <td>{task.date}</td>
-                <td className="text-center">
-                  <button type="button" className="btn btn-primary">
-                    <EyeFill size={24}  />
-                  </button>
-                </td>
-                <td className="text-center">
-                  <button type="button" className="btn btn-warning">
-                  <PencilSquare size={24} color="white" />
-                  </button>
-                </td>
-                <td className="text-center">
-                  <button type="button" className="btn btn-danger">
-                    <TrashFill size={24}   />
-                  </button>
-                </td>
+      <div className="table-content border rounded">
+        <div className="p-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <h3 className="h5 text-dark mb-0">Recent Tasks</h3>
+            <div className="d-flex gap-1">
+              <button className="btn btn-light p-2 text-muted border-0">
+                <ListUl size={24} />
+              </button>
+              <button className="btn btn-light p-2 text-muted border-0">
+                <Grid3x3Gap />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="table-responsive">
+          <table className="table mb-0 table-borderless table-hover">
+            <thead className="border-bottom border-top">
+              <tr className="table-light">
+                <th className="px-3 py-2"></th>
+                <th className="text-secondary text-uppercase px-3 py-2">Task</th>
+                <th className="text-secondary text-uppercase px-3 py-2">Priority</th>
+                <th className="text-secondary text-uppercase px-3 py-2">Due Date</th>
+                <th className="text-secondary text-uppercase px-3 py-2">Status</th>
+                <th className="text-secondary text-uppercase px-3 py-2">Category</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="d-flex justify-content-center mt-5">
-          <nav aria-label="Task pagination">
-            <ul className="pagination">
-              <li className="page-item">
-                <a className="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li className="page-item active">
-                <a className="page-link" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            </thead>
+            <tbody>
+              {filteredTasks.map((task) => (
+                <tr
+                  key={task.id}
+                  className={task.selected ? "table-active" : ""}
+                >
+                  <td className="px-3 py-3">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={task.selected}
+                      onChange={() => handleCheckboxChange(task.id)}
+                    />
+                  </td>
+                  <td className="task-name px-3 py-3">{task.name}</td>
+                  <td className="px-3 py-3">
+                    <span
+                      className={`badge fw-normal ${
+                        task.priority === "High"
+                          ? "bg-danger"
+                          : task.priority === "Medium"
+                          ? "bg-warning"
+                          : "bg-info"
+                      }`}
+                      style={{ borderRadius: "15px" }}
+                    >
+                      {task.priority}
+                    </span>
+                  </td>
+                  <td className="task-date px-3 py-3">{task.date}</td>
+                  <td className="px-3 py-3">{task.status}</td>
+                  <td className="task-category px-3 py-3">{task.gategory}</td>
+                  <td className="text-center task-options px-3 py-3">
+                    <ThreeDotsVertical size={24} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="view-all p-3 text-center border-top">
+          <p className="mb-0 text-primary">View all tasks</p>
         </div>
       </div>
     </div>

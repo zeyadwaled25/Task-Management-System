@@ -54,3 +54,25 @@
 .pagination {
   margin-bottom: 0;
 }
+.task-name {
+  font-weight: 500;
+}
+.task-date,
+.task-category {
+  color: #6b7280 !important;
+}
+
+.task-options {
+  color: #6b7280 !important;
+  transition: 0.3s;
+}
+.task-options svg:hover {
+  color: #374151 !important;
+  cursor: pointer;
+}
+.view-all p {
+  font-weight: 500;
+  cursor: pointer;
+  width: fit-content;
+  margin: 0 auto;
+}
