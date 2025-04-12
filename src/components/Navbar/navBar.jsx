@@ -7,7 +7,11 @@ import AddTaskModal from "./addTaskModal";
 const Navbar = ({ setSearchQuery, handleAddTask, showModal, setShowModal }) => {
   return (
     <nav className="navbar navbar-expand-lg bg-white shadow-sm">
+<<<<<<< HEAD
       <div className="mx-4 d-flex justify-content-between align-items-center w-100">
+=======
+      <div className="container-fluid">
+>>>>>>> 4d9c7897a8a7a5930572acdc1a44aea59d1ab388
         <a className="navbar-brand fw-bold fs-5" href="#">
           Task Management
         </a>
