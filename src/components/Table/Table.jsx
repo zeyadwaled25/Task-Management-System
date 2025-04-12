@@ -11,7 +11,7 @@ function Table() {
       priority: "High",
       status: "Pending",
       date: "01-04-2025",
-      gategory: "Marketing",  
+      gategory: "Marketing",
       selected: false,
     },
     {

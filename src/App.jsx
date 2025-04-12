@@ -3,10 +3,9 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar/navBar";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Table from "./components/Table/Table";
-import AddTaskModal from "./components/Navbar/addTaskModal"; // لصفحة Create
+import AddTaskModal from "./components/Navbar/addTaskModal";
 import "./App.css";
 
-// صفحات إضافية
 const ManageTasks = () => (
   <div className="p-4">
     <h2>Manage Tasks</h2>
@@ -70,27 +69,38 @@ const App = () => {
     setSelectedList(updatedLists.find((list) => list.id === selectedList.id));
     setShowModal(false);
     navigate("/");
-    // يرجع للداشبورد بعد إضافة
   };
 
   return (
     <div className="app">
       <div className="d-flex">
-        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className={`d-none d-lg-block ${isSidebarOpen ? "" : "d-none"}`}>
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        </div>
         <div className="flex-grow-1">
           <Navbar
             setSearchQuery={setSearchQuery}
-            handleAddTask={() => setShowModal(true)} // هيفتح المودال
+            handleAddTask={handleAddTask}
+            showModal={showModal}
+            setShowModal={setShowModal}
           />
 
           <Routes>
-            <Route path="/" element={<Table tasks={selectedList.tasks} />} />
+            <Route
+              path="/"
+              element={
+                <Table searchQuery={searchQuery} tasks={selectedList.tasks} />
+              }
+            />
             <Route path="/manage" element={<ManageTasks />} />
             <Route
               path="/create"
               element={
                 <AddTaskModal
-                  show={false}
+                  show={true}
                   onClose={() => {
                     setShowModal(false);
                     navigate("/");
@@ -101,6 +111,13 @@ const App = () => {
             />
           </Routes>
         </div>
+        <button
+          className="btn btn-primary d-lg-none position-fixed"
+          style={{ bottom: "20px", left: "20px", zIndex: 1000 }}
+          onClick={toggleSidebar}
+        >
+          {isSidebarOpen ? "Hide Sidebar" : "Show Sidebar"}
+        </button>
       </div>
     </div>
   );
