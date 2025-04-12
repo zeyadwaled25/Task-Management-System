@@ -2,21 +2,20 @@ import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar/navBar";
 import Sidebar from "./components/Sidebar/Sidebar";
-import Table from "./components/Table/Table";
+import ListsBoard from "./pages/ListsBoard";
+import ListTasksPage from "./pages/ListTasksPage";
+import CreateListPage from "./pages/CreateListPage";
+import ManageListsPage from "./pages/ManageListsPage";
 import AddTaskModal from "./components/Navbar/addTaskModal";
 import "./App.css";
-
-const ManageTasks = () => (
-  <div className="p-4">
-    <h2>Manage Tasks</h2>
-  </div>
-);
+import Table from "./components/Table/Table";
 
 const App = () => {
   const [lists, setLists] = useState([
     {
       id: 1,
       name: "graphics",
+      status: "To Do",
       tasks: [
         {
           id: 1,
@@ -39,6 +38,7 @@ const App = () => {
     {
       id: 2,
       name: "programming",
+      status: "Doing",
       tasks: [
         {
           id: 3,
@@ -71,36 +71,38 @@ const App = () => {
     navigate("/");
   };
 
-  return (
-    <div className="app">
-      <div className="d-flex">
-        <div className={`d-none d-lg-block ${isSidebarOpen ? "" : "d-none"}`}>
-          <Sidebar
-            isSidebarOpen={isSidebarOpen}
-            toggleSidebar={toggleSidebar}
-          />
-        </div>
-        <div className="flex-grow-1">
-          <Navbar
-            setSearchQuery={setSearchQuery}
-            handleAddTask={handleAddTask}
-            showModal={showModal}
-            setShowModal={setShowModal}
-          />
+  const addList = (newList) => {
+    setLists((prev) => [...prev, newList]);
+  };
 
+  return (
+    <div className="app d-flex">
+      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="d-flex flex-column flex-grow-1">
+        <Navbar
+          setSearchQuery={setSearchQuery}
+          handleAddTask={() => setShowModal(true)}
+          showModal={showModal}
+          setShowModal={setShowModal}
+        />
+        <div className="flex-grow-1">
           <Routes>
+            <Route path="/" element={<Table />} />
+            {/* <Route path="/lists-board" element={<ListsBoard lists={lists} />} />
+            <Route path="/list/:id" element={<ListTasksPage lists={lists} />} /> */}
             <Route
-              path="/"
-              element={
-                <Table searchQuery={searchQuery} tasks={selectedList.tasks} />
-              }
+              path="/create-list"
+              element={<CreateListPage addList={addList} />}
             />
-            <Route path="/manage" element={<ManageTasks />} />
+            <Route
+              path="/manage"
+              element={<ManageListsPage lists={lists} setLists={setLists} />}
+            />
             <Route
               path="/create"
               element={
                 <AddTaskModal
-                  show={true}
+                  show={showModal}
                   onClose={() => {
                     setShowModal(false);
                     navigate("/");
@@ -111,13 +113,6 @@ const App = () => {
             />
           </Routes>
         </div>
-        <button
-          className="btn btn-primary d-lg-none position-fixed"
-          style={{ bottom: "20px", left: "20px", zIndex: 1000 }}
-          onClick={toggleSidebar}
-        >
-          {isSidebarOpen ? "Hide Sidebar" : "Show Sidebar"}
-        </button>
       </div>
     </div>
   );

@@ -94,6 +94,7 @@ function Table() {
                 <th className="text-secondary text-uppercase px-3 py-2">Due Date</th>
                 <th className="text-secondary text-uppercase px-3 py-2">Status</th>
                 <th className="text-secondary text-uppercase px-3 py-2">Category</th>
+                <th className="px-3 py-2"></th>
               </tr>
             </thead>
             <tbody>

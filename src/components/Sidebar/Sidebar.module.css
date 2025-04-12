@@ -1,0 +1,76 @@
+.sidebar {
+  width: 220px;
+  background-color: #ffffff;
+  color: #343a40;
+  border-right: 1px solid #e5e7eb;
+  min-height: 100vh;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  transition: width 0.3s ease;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative; 
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  color: #343a40;
+  font-weight: 500;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navLink:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.active {
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+.toggleBtn {
+  position: sticky;
+  bottom: 30px; 
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+  z-index: 10;
+}
+
+.toggleBtn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.showSidebarBtn {
+  position: fixed;
+  bottom: 2rem;
+  left: 0;
+  z-index: 1000;
+  background-color: #0d6efd;
+  color: white;
+  border-top-right-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  padding: 0.75rem;
+  cursor: pointer;
+}
