@@ -30,12 +30,12 @@ export const TaskProvider = ({ children }) => {
       console.log("Received listId:", listId);
       console.log("Current lists state:", lists);
 
-      if (!lists || lists.length === 0) {
+      if (!lists || lists.length == 0) {
         throw new Error("Lists are not loaded yet. Please try again.");
       }
 
       const updatedLists = lists.map((list) => {
-        if (list.id === listId) {
+        if (list.id == listId) {
           // استخدام listId مباشرة (String)
           console.log("Found list:", list);
           return { ...list, tasks: [...(list.tasks || []), newTask] };
@@ -46,7 +46,7 @@ export const TaskProvider = ({ children }) => {
       setLists(updatedLists);
 
       const listToUpdate = updatedLists.find(
-        (list) => list.id === listId // استخدام listId مباشرة (String)
+        (list) => list.id == listId // استخدام listId مباشرة (String)
       );
       console.log("List to update:", listToUpdate);
 
@@ -74,7 +74,7 @@ export const TaskProvider = ({ children }) => {
         duration: 3,
         onUndo: () => {
           const revertedLists = lists.map((list) => {
-            if (list.id === listId) {
+            if (list.id == listId) {
               return {
                 ...list,
                 tasks: list.tasks.filter((task) => task.id !== newTask.id),
@@ -83,7 +83,7 @@ export const TaskProvider = ({ children }) => {
             return list;
           });
           setLists(revertedLists);
-          const revertedList = revertedLists.find((list) => list.id === listId);
+          const revertedList = revertedLists.find((list) => list.id == listId);
           console.log("Would send PUT request to:", `${url}/${listId}`);
           console.log("PUT request body (undo):", revertedList);
           axios.put(`${url}/${listId}`, revertedList);
@@ -106,14 +106,14 @@ export const TaskProvider = ({ children }) => {
   const updateTask = async (updatedTask) => {
     const listId = updatedTask.listId;
     const originalTask = lists
-      .find((list) => list.id === listId)
-      ?.tasks.find((task) => task.id === updatedTask.id);
+      .find((list) => list.id == listId)
+      ?.tasks.find((task) => task.id == updatedTask.id);
 
     try {
       const updatedLists = lists.map((list) => {
-        if (list.id === listId) {
+        if (list.id == listId) {
           const updatedTasks = list.tasks.map((task) =>
-            task.id === updatedTask.id ? updatedTask : task
+            task.id == updatedTask.id ? updatedTask : task
           );
           return { ...list, tasks: updatedTasks };
         }
@@ -121,9 +121,7 @@ export const TaskProvider = ({ children }) => {
       });
       setLists(updatedLists);
 
-      const listToUpdate = updatedLists.find(
-        (list) => list.id === listId
-      );
+      const listToUpdate = updatedLists.find((list) => list.id == listId);
       await axios.put(
         `${url}/${listId}
         `,
@@ -135,18 +133,16 @@ export const TaskProvider = ({ children }) => {
         duration: 3,
         onUndo: () => {
           const revertedLists = lists.map((list) => {
-            if (list.id === listId) {
+            if (list.id == listId) {
               const revertedTasks = list.tasks.map((task) =>
-                task.id === updatedTask.id ? originalTask : task
+                task.id == updatedTask.id ? originalTask : task
               );
               return { ...list, tasks: revertedTasks };
             }
             return list;
           });
           setLists(revertedLists);
-          const revertedList = revertedLists.find(
-            (list) => list.id === listId
-          );
+          const revertedList = revertedLists.find((list) => list.id == listId);
           axios.put(`${url}/${listId}`, revertedList);
           showAlert({
             message: "Task update undone.",
@@ -196,11 +192,11 @@ export const TaskProvider = ({ children }) => {
   };
 
   const updateList = async (updatedList) => {
-    const originalList = lists.find((list) => list.id === updatedList.id);
+    const originalList = lists.find((list) => list.id == updatedList.id);
 
     try {
       const updatedLists = lists.map((list) =>
-        list.id === updatedList.id ? updatedList : list
+        list.id == updatedList.id ? updatedList : list
       );
       setLists(updatedLists);
       await axios.put(`${url}/${updatedList.id}`, updatedList);
@@ -211,7 +207,7 @@ export const TaskProvider = ({ children }) => {
         duration: 3,
         onUndo: () => {
           const revertedLists = lists.map((list) =>
-            list.id === updatedList.id ? originalList : list
+            list.id == updatedList.id ? originalList : list
           );
           setLists(revertedLists);
           axios.put(`${url}${updatedList.id}`, originalList);
