@@ -35,12 +35,16 @@ const AddTaskContent = ({ onAddTask }) => {
   };
   const handleSubmit = () => {
     if (!lists || lists.length === 0) {
-      alert("Lists are not loaded yet. Please wait a moment and try again.");
+      showAlert(
+        "Lists are not loaded yet. Please wait a moment and try again.",
+        "error",
+        5
+      );
       return;
     }
 
     if (!newTask.listId) {
-      alert("Please select a list before adding a task.");
+      showAlert("Please select a list before adding a task.", "error", 5);
       return;
     }
 
