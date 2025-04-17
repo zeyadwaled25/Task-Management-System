@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Filter from "./Filter";
 import "./Table.css";
 import { Grid3x3Gap, ListUl, ThreeDotsVertical } from "react-bootstrap-icons";
+import { Pagination } from "@mui/material";
 
 function Table() {
+  const tableSize = 5
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -31,8 +33,42 @@ function Table() {
       date: "03-04-2025",
       gategory: "Documentation",
       selected: false,
+    },
+    {
+      id: 4,
+      name: "Update documentation",
+      priority: "Low",
+      status: "Done",
+      date: "03-04-2025",
+      gategory: "Documentation",
+      selected: false,
+    },
+    {
+      id: 5,
+      name: "Update documentation",
+      priority: "Low",
+      status: "Done",
+      date: "03-04-2025",
+      gategory: "Documentation",
+      selected: false,
     }
   ]);
+  const [pagination, setPagination] = useState({
+    count: Math.ceil(tasks.length / tableSize),
+    from: 0,
+    to: tableSize
+  })
+  useEffect(() => {
+    setPagination(prev => ({
+      ...prev,
+      count: Math.ceil(tasks.length / tableSize)
+    }));
+  }, [tasks.length]);
+  const handlePagination = (e, page) => {
+    const from = (page - 1) * tableSize
+    const to = from + tableSize
+    setPagination({...pagination, from, to})
+  }
 
   const [filterOptions, setFilterOptions] = useState({
     priority: "",
@@ -65,7 +101,7 @@ function Table() {
     });
 
   return (
-    <div className="table-container py-3 px-4">
+    <div className="table-container py-3 px-4 pb-0">
       <Filter
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
@@ -98,7 +134,7 @@ function Table() {
               </tr>
             </thead>
             <tbody>
-              {filteredTasks.map((task) => (
+              {filteredTasks.slice(pagination.from, pagination.to).map((task) => (
                 <tr
                   key={task.id}
                   className={task.selected ? "table-active" : ""}
@@ -137,8 +173,10 @@ function Table() {
             </tbody>
           </table>
         </div>
-        <div className="view-all p-3 text-center border-top">
-          <p className="mb-0 text-primary">View all tasks</p>
+        <div className="view-all p-3 border-top">
+          <Pagination count={pagination.count} color="primary" className="pagination"
+            onChange={handlePagination}
+          />
         </div>
       </div>
     </div>
