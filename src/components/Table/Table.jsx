@@ -6,53 +6,7 @@ import { Pagination } from "@mui/material";
 
 function Table() {
   const tableSize = 5
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "Complete project proposal",
-      priority: "High",
-      status: "Pending",
-      date: "01-04-2025",
-      gategory: "Marketing",
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Review code changes",
-      priority: "Medium",
-      status: "In Progress",
-      date: "02-04-2025",
-      gategory: "Development",
-      selected: false,
-    },
-    {
-      id: 3,
-      name: "Update documentation",
-      priority: "Low",
-      status: "Done",
-      date: "03-04-2025",
-      gategory: "Documentation",
-      selected: false,
-    },
-    {
-      id: 4,
-      name: "Update documentation",
-      priority: "Low",
-      status: "Done",
-      date: "03-04-2025",
-      gategory: "Documentation",
-      selected: false,
-    },
-    {
-      id: 5,
-      name: "Update documentation",
-      priority: "Low",
-      status: "Done",
-      date: "03-04-2025",
-      gategory: "Documentation",
-      selected: false,
-    }
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [pagination, setPagination] = useState({
     count: Math.ceil(tasks.length / tableSize),
     from: 0,
@@ -99,9 +53,32 @@ function Table() {
         return 0;
       }
     });
+    // Update pagination when tasks change
+    useEffect(() => {
+      setPagination(prev => ({
+        ...prev,
+        count: Math.ceil(filteredTasks.length / tableSize)
+      }));
+    }, [filteredTasks.length]);
+
+    useEffect(() => {
+      const url = "http://localhost:3000/lists";
+      (async () => {
+        try {
+          const response = await fetch(url);
+          const json = await response.json();
+
+          const allTasks = json.flatMap(list => list.tasks);
+          setTasks(allTasks);
+
+        } catch (error) {
+          console.error(error.message);
+        }
+      })();
+    }, [tasks]);
 
   return (
-    <div className="table-container py-3 px-4 pb-0">
+    <div className="table-container py-3 px-4">
       <Filter
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
