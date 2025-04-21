@@ -1,28 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Filter from "./Filter";
 import "./Table.css";
 import { Grid3x3Gap, ListUl, ThreeDotsVertical } from "react-bootstrap-icons";
 import { Pagination } from "@mui/material";
+import Options from "./Options/Options";
 
 function Table() {
+  // State
   const tableSize = 5
   const [tasks, setTasks] = useState([]);
   const [pagination, setPagination] = useState({
+    currentPage: 1,
     count: Math.ceil(tasks.length / tableSize),
     from: 0,
     to: tableSize
   })
-  useEffect(() => {
-    setPagination(prev => ({
-      ...prev,
-      count: Math.ceil(tasks.length / tableSize)
-    }));
-  }, [tasks.length]);
-  const handlePagination = (e, page) => {
-    const from = (page - 1) * tableSize
-    const to = from + tableSize
-    setPagination({...pagination, from, to})
-  }
 
   const [filterOptions, setFilterOptions] = useState({
     priority: "",
@@ -30,21 +22,12 @@ function Table() {
     date: "",
   });
 
-  const handleCheckboxChange = (taskId) => {
-    setTasks(tasks.map(task =>
-      task.id === taskId ? { ...task, selected: !task.selected } : task
-    ));
-  };
-
-  const filteredTasks = tasks
-    .filter((task) => {
-      const matchesPriority =
-        !filterOptions.priority || task.priority === filterOptions.priority;
-      const matchesStatus =
-        !filterOptions.status || task.status === filterOptions.status;
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesPriority = !filterOptions.priority || task.priority === filterOptions.priority;
+      const matchesStatus = !filterOptions.status || task.status === filterOptions.status;
       return matchesPriority && matchesStatus;
-    })
-    .sort((a, b) => {
+    }).sort((a, b) => {
       if (filterOptions.date === "Newest") {
         return new Date(b.date) - new Date(a.date);
       } else if (filterOptions.date === "Oldest") {
@@ -53,32 +36,59 @@ function Table() {
         return 0;
       }
     });
-    // Update pagination when tasks change
-    useEffect(() => {
-      setPagination(prev => ({
-        ...prev,
-        count: Math.ceil(filteredTasks.length / tableSize)
-      }));
-    }, [filteredTasks.length]);
+  }, [tasks, filterOptions]);
 
-    useEffect(() => {
-      const url = "http://localhost:3000/lists";
-      (async () => {
-        try {
-          const response = await fetch(url);
-          const json = await response.json();
+  // Handler
+  const handleCheckboxChange = (taskId) => {
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, selected: !task.selected } : task
+    ));
+  };
+  const handlePagination = (e, page) => {
+    const from = (page - 1) * tableSize
+    const to = from + tableSize
+    setPagination({...pagination, currentPage: page, from, to})
+  }
+  const handleDelete = (taskId) => {
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+  };
 
-          const allTasks = json.flatMap(list => list.tasks);
-          setTasks(allTasks);
+  // UseEffect
+  // Fetch tasks from API
+  useEffect(() => {
+    const url = "http://localhost:3000/lists";
+    (async () => {
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
 
-        } catch (error) {
-          console.error(error.message);
-        }
-      })();
-    }, [tasks]);
+        const allTasks = json.flatMap(list => list.tasks);
+        setTasks(allTasks);
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    })();
+  }, []);
+
+  // Update pagination when changes
+  useEffect(() => {
+    const newCount = Math.ceil(filteredTasks.length / tableSize);
+    const newCurrentPage = Math.min(pagination.currentPage, newCount) || 1;
+    const from = (newCurrentPage - 1) * tableSize;
+    const to = from + tableSize;
+  
+    setPagination({
+      currentPage: newCurrentPage,
+      count: newCount,
+      from,
+      to,
+    });
+  }, [filteredTasks.length]);  
 
   return (
-    <div className="table-container py-3 px-4">
+    <div className="table-container py-3 pb-md-0 px-4">
       <Filter
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
@@ -97,7 +107,7 @@ function Table() {
             </div>
           </div>
         </div>
-        <div className="table-responsive">
+        <div className="table-content">
           <table className="table mb-0 table-borderless table-hover">
             <thead className="border-bottom border-top">
               <tr className="table-light">
@@ -141,9 +151,12 @@ function Table() {
                   </td>
                   <td className="task-date px-3 py-3">{task.date}</td>
                   <td className="px-3 py-3">{task.status}</td>
-                  <td className="task-category px-3 py-3">{task.gategory}</td>
+                  <td className="task-category px-3 py-3">{task.category}</td>
                   <td className="text-center task-options px-3 py-3">
-                    <ThreeDotsVertical size={24} />
+                    <Options
+                      onEdit={() => console.log("Edit task:", task.id)}
+                      onDelete={() => handleDelete(task.id)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -153,6 +166,7 @@ function Table() {
         <div className="view-all p-3 border-top">
           <Pagination count={pagination.count} color="primary" className="pagination"
             onChange={handlePagination}
+            page={pagination.currentPage}
           />
         </div>
       </div>

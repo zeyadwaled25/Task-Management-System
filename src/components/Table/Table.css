@@ -25,10 +25,6 @@
   color: white;
 }
 
-.table-responsive {
-  overflow-x: auto;
-}
-
 .table .btn {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;

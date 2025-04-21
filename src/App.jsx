@@ -1,18 +1,18 @@
 import React, { useState, useContext } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
-// Imports للكومبوننتات
+// Imports components
 import Navbar from "./components/Navbar/navBar";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Table from "./components/Table/Table";
-import ListsBoard from "./pages/ListsBoard";
+import ListsBoard from "./pages/ListsBoard/ListsBoard";
 import ListTasksPage from "./pages/ListTasksPage";
-import CreateListPage from "./pages/CreateListPage";
-import ManageListsPage from "./pages/ManageListsPage";
+import CreateListPage from "./pages/CreateList/CreateListPage";
+import ManageListsPage from "./pages/ManageLists/ManageListsPage";
 import GlobalModal from "./components/GlobalModal";
 import AddTaskContent from "./components/Navbar/AddTaskContent";
 
-// Imports للـ Context
+// Imports Contexts
 import { TaskContext, TaskProvider } from "./context/TaskContext";
 import { ModalProvider, useModal } from "./context/ModalContext";
 import { AlertProvider } from "./context/AlertContext";

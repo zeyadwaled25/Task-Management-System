@@ -1,0 +1,22 @@
+.options {
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -100%);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.options button {
+  transition: 0.1s;
+}
+.options button svg:hover {
+  color: inherit !important;
+}
+.options button.edit:hover {
+  background-color: #0d6efd;
+  color: white !important;
+}
+.options button.delete:hover {
+  background-color: #dc3545;
+  color: white !important;
+}
