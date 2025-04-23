@@ -37,6 +37,7 @@ const AppContent = () => {
   const handleAddTask = (newTask) => {
     if (newTask.listId) {
       addTaskToList(newTask.listId, newTask);
+      
       navigate("/");
     }
   };
