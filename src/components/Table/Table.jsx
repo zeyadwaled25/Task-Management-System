@@ -1,38 +1,20 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Filter from "./Filter";
 import "./Table.css";
 import { Grid3x3Gap, ListUl, ThreeDotsVertical } from "react-bootstrap-icons";
+import { Pagination } from "@mui/material";
+import Options from "./Options/Options";
 
 function Table() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "Complete project proposal",
-      priority: "High",
-      status: "Pending",
-      date: "01-04-2025",
-      gategory: "Marketing",
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Review code changes",
-      priority: "Medium",
-      status: "In Progress",
-      date: "02-04-2025",
-      gategory: "Development",
-      selected: false,
-    },
-    {
-      id: 3,
-      name: "Update documentation",
-      priority: "Low",
-      status: "Done",
-      date: "03-04-2025",
-      gategory: "Documentation",
-      selected: false,
-    }
-  ]);
+  // State
+  const tableSize = 5
+  const [tasks, setTasks] = useState([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    count: Math.ceil(tasks.length / tableSize),
+    from: 0,
+    to: tableSize
+  })
 
   const [filterOptions, setFilterOptions] = useState({
     priority: "",
@@ -40,21 +22,12 @@ function Table() {
     date: "",
   });
 
-  const handleCheckboxChange = (taskId) => {
-    setTasks(tasks.map(task =>
-      task.id === taskId ? { ...task, selected: !task.selected } : task
-    ));
-  };
-
-  const filteredTasks = tasks
-    .filter((task) => {
-      const matchesPriority =
-        !filterOptions.priority || task.priority === filterOptions.priority;
-      const matchesStatus =
-        !filterOptions.status || task.status === filterOptions.status;
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesPriority = !filterOptions.priority || task.priority === filterOptions.priority;
+      const matchesStatus = !filterOptions.status || task.status === filterOptions.status;
       return matchesPriority && matchesStatus;
-    })
-    .sort((a, b) => {
+    }).sort((a, b) => {
       if (filterOptions.date === "Newest") {
         return new Date(b.date) - new Date(a.date);
       } else if (filterOptions.date === "Oldest") {
@@ -63,9 +36,59 @@ function Table() {
         return 0;
       }
     });
+  }, [tasks, filterOptions]);
+
+  // Handler
+  const handleCheckboxChange = (taskId) => {
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, selected: !task.selected } : task
+    ));
+  };
+  const handlePagination = (e, page) => {
+    const from = (page - 1) * tableSize
+    const to = from + tableSize
+    setPagination({...pagination, currentPage: page, from, to})
+  }
+  const handleDelete = (taskId) => {
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+  };
+
+  // UseEffect
+  // Fetch tasks from API
+  useEffect(() => {
+    const url = "http://localhost:3000/lists";
+    (async () => {
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+
+        const allTasks = json.flatMap(list => list.tasks);
+        setTasks(allTasks);
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    })();
+  }, []);
+
+  // Update pagination when changes
+  useEffect(() => {
+    const newCount = Math.ceil(filteredTasks.length / tableSize);
+    const newCurrentPage = Math.min(pagination.currentPage, newCount) || 1;
+    const from = (newCurrentPage - 1) * tableSize;
+    const to = from + tableSize;
+  
+    setPagination({
+      currentPage: newCurrentPage,
+      count: newCount,
+      from,
+      to,
+    });
+  }, [filteredTasks.length]);  
 
   return (
-    <div className="table-container py-3 px-4">
+    <div className="table-container py-3 pb-md-0 px-4">
       <Filter
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
@@ -84,7 +107,7 @@ function Table() {
             </div>
           </div>
         </div>
-        <div className="table-responsive">
+        <div className="table-content">
           <table className="table mb-0 table-borderless table-hover">
             <thead className="border-bottom border-top">
               <tr className="table-light">
@@ -98,7 +121,7 @@ function Table() {
               </tr>
             </thead>
             <tbody>
-              {filteredTasks.map((task) => (
+              {filteredTasks.slice(pagination.from, pagination.to).map((task) => (
                 <tr
                   key={task.id}
                   className={task.selected ? "table-active" : ""}
@@ -128,17 +151,23 @@ function Table() {
                   </td>
                   <td className="task-date px-3 py-3">{task.date}</td>
                   <td className="px-3 py-3">{task.status}</td>
-                  <td className="task-category px-3 py-3">{task.gategory}</td>
+                  <td className="task-category px-3 py-3">{task.category}</td>
                   <td className="text-center task-options px-3 py-3">
-                    <ThreeDotsVertical size={24} />
+                    <Options
+                      onEdit={() => console.log("Edit task:", task.id)}
+                      onDelete={() => handleDelete(task.id)}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="view-all p-3 text-center border-top">
-          <p className="mb-0 text-primary">View all tasks</p>
+        <div className="view-all p-3 border-top">
+          <Pagination count={pagination.count} color="primary" className="pagination"
+            onChange={handlePagination}
+            page={pagination.currentPage}
+          />
         </div>
       </div>
     </div>

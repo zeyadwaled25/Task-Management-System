@@ -1,5 +1,6 @@
 .sidebar {
   width: 220px;
+  min-width: 200px;
   background-color: #ffffff;
   color: #343a40;
   border-right: 1px solid #e5e7eb;
@@ -11,6 +12,13 @@
   flex-direction: column;
   position: relative; 
   overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 99;
+    max-height: 100vh;
+  }
 }
 
 .brand {

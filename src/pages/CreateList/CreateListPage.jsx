@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddTaskModal from "../components/Navbar/AddTaskContent";
+import AddTaskModal from "../../components/Navbar/AddTaskContent";
 import styles from "./CreateListPage.module.css";
 
 function CreateListPage({ addList }) {
