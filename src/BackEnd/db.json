@@ -14,7 +14,8 @@
             "design",
             "banner"
           ],
-          "status": "doing"
+          "status": "doing",
+          "category": "graphics"
         },
         {
           "id": 1744618356929,
@@ -23,7 +24,8 @@
           "status": "todo",
           "priority": "High",
           "date": "2025-04-14",
-          "keywords": []
+          "keywords": [],
+          "category": "graphics"
         },
         {
           "id": 1745261689984,
@@ -35,7 +37,19 @@
           "keywords": [
             "Test Task 3"
           ],
-          "listId": "1"
+          "listId": "1",
+          "category": "graphics"
+        },
+        {
+          "id": 1745388258679,
+          "name": "بشس",
+          "description": "يبسش",
+          "status": "doing",
+          "priority": "High",
+          "date": "2025-04-23",
+          "keywords": [],
+          "listId": "1",
+          "category": "graphics"
         }
       ]
     },
@@ -53,7 +67,8 @@
             "code",
             "bugs"
           ],
-          "status": "done"
+          "status": "done",
+          "category": "programming"
         },
         {
           "id": 1744792087291,
@@ -67,7 +82,8 @@
             "Router",
             "Studyin"
           ],
-          "listId": "2"
+          "listId": "2",
+          "category": "programming"
         },
         {
           "id": 1745106653455,
@@ -78,7 +94,44 @@
           "date": "2025-04-20",
           "keywords": [
             "Test Task"
-          ]
+          ],
+          "category": "programming"
+        },
+        {
+          "id": 1745386266289,
+          "name": "Do the Edit in the table",
+          "description": "do the edit button with return the current task info into the form",
+          "status": "todo",
+          "priority": "High",
+          "date": "2025-04-23",
+          "keywords": [
+            "React",
+            "Logic"
+          ],
+          "listId": "2",
+          "category": "programming"
+        },
+        {
+          "id": 1745388111386,
+          "name": "add the category in the tabel",
+          "description": "put the category in the db.json ",
+          "status": "done",
+          "priority": "High",
+          "date": "2025-04-23",
+          "keywords": [],
+          "listId": "2",
+          "category": "programming"
+        },
+        {
+          "id": 1745388198766,
+          "name": "تعديل في الكود",
+          "description": "",
+          "status": "todo",
+          "priority": "High",
+          "date": "2025-04-23",
+          "keywords": [],
+          "listId": "2",
+          "category": "programming"
         }
       ]
     }

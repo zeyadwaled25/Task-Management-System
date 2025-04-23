@@ -60,9 +60,6 @@ const AddTaskContent = ({ onAddTask }) => {
         : [],
     };
 
-    console.log("Submitting new task:", task);
-    console.log("List ID:", newTask.listId);
-
     addTaskToList(newTask.listId, task);
     onAddTask({ ...task, listId: newTask.listId });
 
