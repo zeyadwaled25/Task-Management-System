@@ -6,6 +6,10 @@ import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
 function Table() {
+  // urls
+  const urlTasks = "http://localhost:3000/tasks";
+  // const urlLists = "http://localhost:3000/lists";
+
   // State
   const tableSize = 5;
   const [tasks, setTasks] = useState([]);
@@ -55,22 +59,26 @@ function Table() {
     const to = from + tableSize;
     setPagination({ ...pagination, currentPage: page, from, to });
   };
-  const handleDelete = (taskId) => {
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(updatedTasks);
+  const handleDelete = async (taskId) => {
+    try {
+      await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      setTasks((prevTasks) => prevTasks.filter(task => task.id !== taskId));
+    } catch (error) {
+      console.error('Error Fetching', error);
+    }
   };
 
   // UseEffect
   // Fetch tasks from API
   useEffect(() => {
-    const url = "http://localhost:3000/lists";
     (async () => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(urlTasks);
         const json = await response.json();
+        setTasks(json);
 
-        const allTasks = json.flatMap((list) => list.tasks);
-        setTasks(allTasks);
       } catch (error) {
         console.error(error.message);
       }
