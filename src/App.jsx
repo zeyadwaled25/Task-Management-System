@@ -10,7 +10,6 @@ import ListTasksPage from "./pages/ListTasksPage";
 import CreateListPage from "./pages/CreateList/CreateListPage";
 import ManageListsPage from "./pages/ManageLists/ManageListsPage";
 import GlobalModal from "./components/GlobalModal";
-import AddTaskContent from "./components/Navbar/AddTaskContent";
 
 // Imports Contexts
 import { TaskContext, TaskProvider } from "./context/TaskContext";
@@ -21,7 +20,7 @@ import "./App.css";
 
 const AppContent = () => {
   const { lists, addTaskToList } = useContext(TaskContext);
-  const { modalState } = useModal();
+  const { openModal } = useModal();
   const [selectedList, setSelectedList] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -37,23 +36,7 @@ const AppContent = () => {
   const handleAddTask = (newTask) => {
     if (newTask.listId) {
       addTaskToList(newTask.listId, newTask);
-      
       navigate("/");
-    }
-  };
-
-  const renderModalContent = () => {
-    switch (modalState.type) {
-      case "addTask":
-        return <AddTaskContent className="" onAddTask={handleAddTask} />;
-      case "editTask":
-        return <EditTaskContent />;
-      case "addList":
-        return <AddListContent />;
-      case "editList":
-        return <EditListContent />;
-      default:
-        return null;
     }
   };
 
@@ -61,7 +44,10 @@ const AppContent = () => {
     <div className="app d-flex">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="d-flex flex-column flex-grow-1">
-        <Navbar setSearchQuery={setSearchQuery} />
+        <Navbar
+          setSearchQuery={setSearchQuery}
+          onAddTask={() => openModal("addTask", { onAddTask: handleAddTask })}
+        />
         <div className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Table searchQuery={searchQuery} />} />
@@ -72,7 +58,7 @@ const AppContent = () => {
           </Routes>
         </div>
       </div>
-      <GlobalModal>{renderModalContent()}</GlobalModal>
+      <GlobalModal />
     </div>
   );
 };
@@ -86,4 +72,5 @@ const App = () => (
     </ModalProvider>
   </AlertProvider>
 );
+
 export default App;

@@ -28,30 +28,6 @@
   ],
   "tasks": [
     {
-      "id": "1",
-      "name": "Create banner",
-      "priority": "Medium",
-      "date": "2025-04-07",
-      "keywords": [
-        "design",
-        "banner"
-      ],
-      "status": "doing",
-      "category": "graphics",
-      "listId": "1"
-    },
-    {
-      "id": "2",
-      "name": "ReactApp Provider",
-      "description": "fd",
-      "status": "todo",
-      "priority": "High",
-      "date": "2025-04-14",
-      "keywords": [],
-      "category": "graphics",
-      "listId": "1"
-    },
-    {
       "id": "3",
       "name": "Test Task 3",
       "description": "Test Task 3",
@@ -63,19 +39,6 @@
       ],
       "listId": "1",
       "category": "graphics"
-    },
-    {
-      "id": "5",
-      "name": "Fix bugs",
-      "priority": "Low",
-      "date": "2025-04-05",
-      "keywords": [
-        "code",
-        "bugs"
-      ],
-      "status": "done",
-      "category": "programming",
-      "listId": "2"
     },
     {
       "id": "6",
@@ -93,33 +56,6 @@
       "category": "programming"
     },
     {
-      "id": "7",
-      "name": "Test Task",
-      "description": "Test Task",
-      "status": "todo",
-      "priority": "Medium",
-      "date": "2025-04-20",
-      "keywords": [
-        "Test Task"
-      ],
-      "category": "programming",
-      "listId": "2"
-    },
-    {
-      "id": "8",
-      "name": "Do the Edit in the table",
-      "description": "do the edit button with return the current task info into the form",
-      "status": "todo",
-      "priority": "High",
-      "date": "2025-04-23",
-      "keywords": [
-        "React",
-        "Logic"
-      ],
-      "listId": "2",
-      "category": "programming"
-    },
-    {
       "id": "9",
       "name": "add the category in the tabel",
       "description": "put the category in the db.json ",
@@ -127,6 +63,31 @@
       "priority": "High",
       "date": "2025-04-23",
       "keywords": [],
+      "listId": "2",
+      "category": "programming"
+    },
+    {
+      "id": "1745598760004",
+      "name": "ReactApp Provider",
+      "description": "تبيسش",
+      "status": "doing",
+      "priority": "Low",
+      "date": "2025-05-09",
+      "keywords": [],
+      "listId": "1",
+      "category": "graphics"
+    },
+    {
+      "id": "1745598948406",
+      "name": "task 2",
+      "description": "go to the DB.json and DO",
+      "status": "doing",
+      "priority": "Medium",
+      "date": "2025-05-07",
+      "keywords": [
+        "db.json",
+        "edit"
+      ],
       "listId": "2",
       "category": "programming"
     }

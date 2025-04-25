@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
+import { useContext } from "react";
+import { TaskContext } from "../../context/TaskContext";
 import Filter from "./Filter";
 import "./Table.css";
-import { Grid3x3Gap, ListUl, ThreeDotsVertical } from "react-bootstrap-icons";
+import { Grid3x3Gap, ListUl } from "react-bootstrap-icons";
 import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
-function Table() {
-  // urls
-  const urlTasks = "http://localhost:3000/tasks";
-  // const urlLists = "http://localhost:3000/lists";
+function Table({ searchQuery }) {
+  const { tasks } = useContext(TaskContext);
 
-  // State
   const tableSize = 5;
-  const [tasks, setTasks] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     count: Math.ceil(tasks.length / tableSize),
@@ -33,7 +31,10 @@ function Table() {
           !filterOptions.priority || task.priority === filterOptions.priority;
         const matchesStatus =
           !filterOptions.status || task.status === filterOptions.status;
-        return matchesPriority && matchesStatus;
+        const matchesSearch = task.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        return matchesPriority && matchesStatus && matchesSearch;
       })
       .sort((a, b) => {
         if (filterOptions.date === "Newest") {
@@ -44,48 +45,18 @@ function Table() {
           return 0;
         }
       });
-  }, [tasks, filterOptions]);
+  }, [tasks, filterOptions, searchQuery]);
 
-  // Handler
   const handleCheckboxChange = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, selected: !task.selected } : task
-      )
-    );
+    // Not used in the current implementation, but keeping it for future use
   };
+
   const handlePagination = (e, page) => {
     const from = (page - 1) * tableSize;
     const to = from + tableSize;
     setPagination({ ...pagination, currentPage: page, from, to });
   };
-  const handleDelete = async (taskId) => {
-    try {
-      await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: 'DELETE',
-      });
-      setTasks((prevTasks) => prevTasks.filter(task => task.id !== taskId));
-    } catch (error) {
-      console.error('Error Fetching', error);
-    }
-  };
 
-  // UseEffect
-  // Fetch tasks from API
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await fetch(urlTasks);
-        const json = await response.json();
-        setTasks(json);
-
-      } catch (error) {
-        console.error(error.message);
-      }
-    })();
-  }, []);
-
-  // Update pagination when changes
   useEffect(() => {
     const newCount = Math.ceil(filteredTasks.length / tableSize);
     const newCurrentPage = Math.min(pagination.currentPage, newCount) || 1;
@@ -155,7 +126,7 @@ function Table() {
                       <input
                         type="checkbox"
                         className="form-check-input"
-                        checked={task.selected}
+                        checked={task.selected || false}
                         onChange={() => handleCheckboxChange(task.id)}
                       />
                     </td>
@@ -178,10 +149,7 @@ function Table() {
                     <td className="px-3 py-3">{task.status}</td>
                     <td className="task-category px-3 py-3">{task.category}</td>
                     <td className="text-center task-options px-3 py-3">
-                      <Options
-                        onEdit={() => console.log("Edit task:", task.id)}
-                        onDelete={() => handleDelete(task.id)}
-                      />
+                      <Options task={task} />
                     </td>
                   </tr>
                 ))}
