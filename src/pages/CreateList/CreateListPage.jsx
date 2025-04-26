@@ -1,24 +1,11 @@
 // src/pages/CreateList/CreateListPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-=======
-import AddTaskModal from "../../components/AddTaskContent";
-import styles from "./CreateListPage.module.css";
-
-function CreateListPage({ addList }) {
-  const [listName, setListName] = useState("");
-  const [listStatus, setListStatus] = useState("To Do");
-  const [listDate, setListDate] = useState("");
-  const [tasks, setTasks] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
->>>>>>> a68b04c72cdfd986d9cc993b56ffbf133e8ed2c5
 
 function CreateListPage() {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("To Do");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]); 
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // التاريخ الافتراضي هو اليوم
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -42,10 +29,10 @@ function CreateListPage() {
 
   return (
     <div className="container py-4">
-      <h3 className="mb-1 fw-bold"> Add New List</h3>
+      <h3 className="mb-1 fw-bold">Add New List</h3>
       <hr
         className="mb-4"
-        style={{ borderTop: "3px solid #ddd", width: "180px" }}
+        style={{ borderTop: "2px solid #ddd", width: "160px" }}
       />
 
       <form

@@ -1,9 +1,10 @@
-// src/pages/ListTasksPage.jsx
 import { ArrowLeft } from "lucide-react";
-import React from "react";
+import React, { useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { TaskContext } from "../context/TaskContext";
 
-function ListTasksPage({ lists }) {
+function ListTasksPage() {
+  const { lists } = useContext(TaskContext);
   const { id } = useParams();
   const navigate = useNavigate();
 

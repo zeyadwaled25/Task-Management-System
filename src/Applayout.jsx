@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Navbar from "./components/Navbar/navBar";
 import GlobalModal from "./components/GlobalModal";
-import AddTaskContent from "./components/Navbar/AddTaskContent";
+import AddTaskContent from "./components/AddTaskContent";
 import EditTaskContent from "./components/Navbar/EditTaskContent";
 import AddListContent from "./components/Navbar/AddListContent";
 import EditListContent from "./components/Navbar/EditListContent";
