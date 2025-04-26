@@ -1,40 +1,95 @@
+// src/pages/ListTasksPage.jsx
+import { ArrowLeft } from "lucide-react";
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Table from "../components/Table/Table";
-import { ArrowLeft } from "react-bootstrap-icons";
 
 function ListTasksPage({ lists }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const list = lists.find((l) => l.id === parseInt(id));
+  const list = lists.find((l) => l.id === id);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "To Do":
+        return "#0d6efd"; // الأزرق
+      case "Doing":
+        return "#ffc107"; // الأصفر
+      case "Done":
+        return "#198754"; // الأخضر
+      default:
+        return "#6c757d"; // رمادي
+    }
+  };
 
   if (!list) {
     return (
-      <div className="p-4">
-        <h4>List not found</h4>
-        <button className="btn btn-secondary mt-3" onClick={() => navigate(-1)}>
-          <ArrowLeft className="me-2" />
-          Go Back
+      <div className="container py-5 text-center">
+        <h3 className="text-danger mb-3"> List not found</h3>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/lists-board")}
+        >
+           Back to Lists
         </button>
       </div>
     );
   }
 
   return (
-    <div className="p-4">
+    <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3>Tasks in: {list.name}</h3>
+        <h3> {list.name}</h3>
         <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate(-1)}
+          className="btn btn-outline-primary"
+          onClick={() => navigate("/lists-board")}
         >
-          <ArrowLeft className="me-2" />
-          Back to Lists
+        <ArrowLeft/>
         </button>
       </div>
 
-      <Table tasks={list.tasks} />
+      <h6 className="text-muted mb-3">
+        Status:{" "}
+        <span
+          className="badge"
+          style={{ backgroundColor: getStatusColor(list.status) }}
+        >
+          {list.status}
+        </span>
+      </h6>
+
+      {list.tasks.length === 0 ? (
+        <div className="alert alert-warning">No tasks found for this list.</div>
+      ) : (
+        <ul className="list-group shadow-sm">
+          {list.tasks.map((task, index) => (
+            <li
+              key={index}
+              className="list-group-item d-flex justify-content-between align-items-center"
+              style={{
+                transition: "0.3s ease",
+                cursor: "pointer",
+                borderRadius: "5px",
+              }}
+            >
+              <div className="d-flex justify-content-between w-100">
+                <span>{task.name}</span>
+                <span
+                  className={`badge ${
+                    task.status === "To Do"
+                      ? "bg-primary"
+                      : task.status === "Doing"
+                      ? "bg-warning text-dark"
+                      : "bg-success"
+                  }`}
+                >
+                  {task.status}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -37,31 +37,19 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             }
           >
             <HouseDoor className="me-2" />
-            Dashboard
+            All Tasks
           </NavLink>
         </li>
 
         <li className="nav-item mb-2">
           <NavLink
-            to="/manage"
+            to="/lists-board"
             className={({ isActive }) =>
               `${styles.navLink} ${isActive ? styles.active : ""}`
             }
           >
             <ListTask className="me-2" />
-            Manage Lists
-          </NavLink>
-        </li>
-
-        <li className="nav-item">
-          <NavLink
-            to="/create-list"
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.active : ""}`
-            }
-          >
-            <PlusCircle className="me-2" />
-            Create List
+            All Lists
           </NavLink>
         </li>
       </ul>
