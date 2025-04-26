@@ -1,6 +1,19 @@
 // src/pages/CreateList/CreateListPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
+=======
+import AddTaskModal from "../../components/AddTaskContent";
+import styles from "./CreateListPage.module.css";
+
+function CreateListPage({ addList }) {
+  const [listName, setListName] = useState("");
+  const [listStatus, setListStatus] = useState("To Do");
+  const [listDate, setListDate] = useState("");
+  const [tasks, setTasks] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+>>>>>>> a68b04c72cdfd986d9cc993b56ffbf133e8ed2c5
 
 function CreateListPage() {
   const [name, setName] = useState("");

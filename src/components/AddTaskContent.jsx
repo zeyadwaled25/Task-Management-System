@@ -1,8 +1,7 @@
-// src/components/AddTaskContent.jsx
 import React, { useState, useContext } from "react";
-import { TaskContext } from "../../context/TaskContext";
-import { useModal } from "../../context/ModalContext";
-import { useAlert } from "../../context/AlertContext";
+import { TaskContext } from "../context/TaskContext";
+import { useModal } from "../context/ModalContext";
+import { useAlert } from "../context/AlertContext";
 
 const AddTaskContent = ({ onAddTask }) => {
   const { lists, addTaskToList } = useContext(TaskContext);
@@ -33,18 +32,24 @@ const AddTaskContent = ({ onAddTask }) => {
       [field]: value,
     }));
   };
+
   const handleSubmit = () => {
     if (!lists || lists.length === 0) {
-      showAlert(
-        "Lists are not loaded yet. Please wait a moment and try again.",
-        "error",
-        5
-      );
+      showAlert({
+        message:
+          "Lists are not loaded yet. Please wait a moment and try again.",
+        type: "error",
+        duration: 5,
+      });
       return;
     }
 
     if (!newTask.listId) {
-      showAlert("Please select a list before adding a task.", "error", 5);
+      showAlert({
+        message: "Please select a list before adding a task.",
+        type: "error",
+        duration: 5,
+      });
       return;
     }
 
@@ -60,14 +65,12 @@ const AddTaskContent = ({ onAddTask }) => {
         : [],
     };
 
-    console.log("Submitting new task:", task);
-    console.log("List ID:", newTask.listId);
-
     addTaskToList(newTask.listId, task);
     onAddTask({ ...task, listId: newTask.listId });
 
     closeModal();
   };
+
   return (
     <>
       <div className="modal-header bg-white text-dark">

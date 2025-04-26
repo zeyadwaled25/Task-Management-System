@@ -1,18 +1,20 @@
-// src/context/TaskContext.js
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios";
-import { useAlert } from "./AlertContext"; // استيراد useAlert
+import { useAlert } from "../context/AlertContext";
 
-export const TaskContext = createContext();
+const TaskContext = createContext();
 
-export const TaskProvider = ({ children }) => {
-  const url = "http://localhost:3000/lists";
+const TaskProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const { showAlert } = useAlert();
+  const listsUrl = "http://localhost:3000/lists";
+  const tasksUrl = "http://localhost:3000/tasks";
 
   useEffect(() => {
+    // Fetch lists
     axios
-      .get(url)
+      .get(listsUrl)
       .then((response) => {
         setLists(response.data);
       })
@@ -22,71 +24,50 @@ export const TaskProvider = ({ children }) => {
           type: "error",
           duration: 5,
         });
-        console.error("Error fetching lists:", error);
+      });
+
+    // Fetch tasks
+    axios
+      .get(tasksUrl)
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        showAlert({
+          message: "Failed to fetch tasks. Please try again.",
+          type: "error",
+          duration: 5,
+        });
       });
   }, []);
+
   const addTaskToList = async (listId, newTask) => {
     try {
-      console.log("Received listId:", listId);
-      console.log("Current lists state:", lists);
-
       if (!lists || lists.length == 0) {
         throw new Error("Lists are not loaded yet. Please try again.");
       }
 
-      const updatedLists = lists.map((list) => {
-        if (list.id == listId) {
-          // استخدام listId مباشرة (String)
-          console.log("Found list:", list);
-          return { ...list, tasks: [...(list.tasks || []), newTask] };
-        }
-        return list;
-      });
-      console.log("Updated lists:", updatedLists);
-      setLists(updatedLists);
+      const targetList = lists.find((list) => list.id == listId);
+      if (!targetList) {
+        throw new Error("Target list not found");
+      }
 
-      const listToUpdate = updatedLists.find(
-        (list) => list.id == listId // استخدام listId مباشرة (String)
-      );
-      console.log("List to update:", listToUpdate);
+      const taskWithCategory = {
+        ...newTask,
+        listId,
+        category: targetList.name,
+      };
 
-      if (!listToUpdate) {
-        throw new Error("List not found");
-      }
-      if (!listToUpdate.name) {
-        throw new Error("List is missing 'name' property");
-      }
-      if (!listToUpdate.status) {
-        throw new Error("List is missing 'status' property");
-      }
-      if (!Array.isArray(listToUpdate.tasks)) {
-        throw new Error(
-          "List is missing 'tasks' property or it's not an array"
-        );
-      }
-      console.log("Would send PUT request to:", `${url}/${listId}`);
-      console.log("PUT request body:", listToUpdate);
-      await axios.put(`${url}/${listId}`, listToUpdate);
+      const response = await axios.post(tasksUrl, taskWithCategory);
+      setTasks([...tasks, response.data]);
 
       showAlert({
         message: "Task added successfully!",
         type: "success",
         duration: 3,
         onUndo: () => {
-          const revertedLists = lists.map((list) => {
-            if (list.id == listId) {
-              return {
-                ...list,
-                tasks: list.tasks.filter((task) => task.id !== newTask.id),
-              };
-            }
-            return list;
-          });
-          setLists(revertedLists);
-          const revertedList = revertedLists.find((list) => list.id == listId);
-          console.log("Would send PUT request to:", `${url}/${listId}`);
-          console.log("PUT request body (undo):", revertedList);
-          axios.put(`${url}/${listId}`, revertedList);
+          axios.delete(`${tasksUrl}/${response.data.id}`);
+          setTasks(tasks.filter((task) => task.id !== response.data.id));
           showAlert({
             message: "Task addition undone.",
             type: "info",
@@ -100,50 +81,41 @@ export const TaskProvider = ({ children }) => {
         type: "error",
         duration: 5,
       });
-      console.error("Error updating list:", error);
     }
   };
+
   const updateTask = async (updatedTask) => {
     const listId = updatedTask.listId;
-    const originalTask = lists
-      .find((list) => list.id == listId)
-      ?.tasks.find((task) => task.id == updatedTask.id);
+    const originalTask = tasks.find((task) => task.id == updatedTask.id);
 
     try {
-      const updatedLists = lists.map((list) => {
-        if (list.id == listId) {
-          const updatedTasks = list.tasks.map((task) =>
-            task.id == updatedTask.id ? updatedTask : task
-          );
-          return { ...list, tasks: updatedTasks };
-        }
-        return list;
-      });
-      setLists(updatedLists);
+      const targetList = lists.find((list) => list.id == listId);
+      if (!targetList) {
+        throw new Error("Target list not found");
+      }
 
-      const listToUpdate = updatedLists.find((list) => list.id == listId);
-      await axios.put(
-        `${url}/${listId}
-        `,
-        listToUpdate
+      const taskWithCategory = {
+        ...updatedTask,
+        category: updatedTask.category || targetList.name,
+      };
+      await axios.put(`${tasksUrl}/${updatedTask.id}`, taskWithCategory);
+      console.log("Task updated successfully:", taskWithCategory);
+
+      const updatedTasks = tasks.map((task) =>
+        task.id == updatedTask.id ? taskWithCategory : task
       );
+      setTasks(updatedTasks);
+
       showAlert({
         message: "Task updated successfully!",
         type: "success",
         duration: 3,
         onUndo: () => {
-          const revertedLists = lists.map((list) => {
-            if (list.id == listId) {
-              const revertedTasks = list.tasks.map((task) =>
-                task.id == updatedTask.id ? originalTask : task
-              );
-              return { ...list, tasks: revertedTasks };
-            }
-            return list;
-          });
-          setLists(revertedLists);
-          const revertedList = revertedLists.find((list) => list.id == listId);
-          axios.put(`${url}/${listId}`, revertedList);
+          const revertedTasks = tasks.map((task) =>
+            task.id == updatedTask.id ? originalTask : task
+          );
+          setTasks(revertedTasks);
+          axios.put(`${tasksUrl}/${originalTask.id}`, originalTask);
           showAlert({
             message: "Task update undone.",
             type: "info",
@@ -157,13 +129,41 @@ export const TaskProvider = ({ children }) => {
         type: "error",
         duration: 5,
       });
-      console.error("Error updating task:", error);
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    const taskToDelete = tasks.find((task) => task.id == taskId);
+    try {
+      await axios.delete(`${tasksUrl}/${taskId}`);
+      setTasks(tasks.filter((task) => task.id !== taskId));
+
+      showAlert({
+        message: "Task deleted successfully!",
+        type: "success",
+        duration: 3,
+        onUndo: () => {
+          axios.post(tasksUrl, taskToDelete);
+          setTasks([...tasks, taskToDelete]);
+          showAlert({
+            message: "Task deletion undone.",
+            type: "info",
+            duration: 3,
+          });
+        },
+      });
+    } catch (error) {
+      showAlert({
+        message: "Failed to delete task. Please try again.",
+        type: "error",
+        duration: 5,
+      });
     }
   };
 
   const addList = async (newList) => {
     try {
-      const response = await axios.post(url, newList);
+      const response = await axios.post(listsUrl, newList);
       setLists([...lists, response.data]);
 
       showAlert({
@@ -172,7 +172,7 @@ export const TaskProvider = ({ children }) => {
         duration: 3,
         onUndo: () => {
           const listId = response.data.id;
-          axios.delete(`${url}/${listId}`);
+          axios.delete(`${listsUrl}/${listId}`);
           setLists(lists.filter((list) => list.id !== listId));
           showAlert({
             message: "List addition undone.",
@@ -187,19 +187,20 @@ export const TaskProvider = ({ children }) => {
         type: "error",
         duration: 5,
       });
-      console.error("Error adding list:", error);
     }
   };
 
   const updateList = async (updatedList) => {
-    const originalList = lists.find((list) => list.id == updatedList.id);
+    const listId = updatedList.id;
+    const originalList = lists.find((list) => list.id == listId);
 
     try {
       const updatedLists = lists.map((list) =>
-        list.id == updatedList.id ? updatedList : list
+        list.id == listId ? updatedList : list
       );
       setLists(updatedLists);
-      await axios.put(`${url}/${updatedList.id}`, updatedList);
+
+      await axios.put(`${listsUrl}/${listId}`, updatedList);
 
       showAlert({
         message: "List updated successfully!",
@@ -207,10 +208,10 @@ export const TaskProvider = ({ children }) => {
         duration: 3,
         onUndo: () => {
           const revertedLists = lists.map((list) =>
-            list.id == updatedList.id ? originalList : list
+            list.id == listId ? originalList : list
           );
           setLists(revertedLists);
-          axios.put(`${url}${updatedList.id}`, originalList);
+          axios.put(`${listsUrl}/${listId}`, originalList);
           showAlert({
             message: "List update undone.",
             type: "info",
@@ -224,15 +225,24 @@ export const TaskProvider = ({ children }) => {
         type: "error",
         duration: 5,
       });
-      console.error("Error updating list:", error);
     }
   };
 
   return (
     <TaskContext.Provider
-      value={{ lists, addTaskToList, updateTask, addList, updateList }}
+      value={{
+        lists,
+        tasks,
+        addTaskToList,
+        updateTask,
+        deleteTask,
+        addList,
+        updateList,
+      }}
     >
       {children}
     </TaskContext.Provider>
   );
 };
+
+export { TaskContext, TaskProvider };
