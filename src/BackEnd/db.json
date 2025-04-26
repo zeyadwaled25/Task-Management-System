@@ -4,84 +4,92 @@
       "id": "1",
       "name": "graphics",
       "status": "To Do",
-      "date": "2025-04-26"
+      "tasks": [
+        {
+          "id": 2,
+          "name": "Create banner",
+          "priority": "Medium",
+          "date": "2025-04-07",
+          "keywords": [
+            "design",
+            "banner"
+          ],
+          "status": "done"
+        },
+        {
+          "id": 1744618356929,
+          "name": "ReactApp Provider",
+          "description": "fd",
+          "status": "done",
+          "priority": "High",
+          "date": "2025-04-14",
+          "keywords": []
+        },
+        {
+          "id": 1745688703225,
+          "name": "Test Task 3",
+          "description": "Test Task 3",
+          "status": "todo",
+          "priority": "High",
+          "date": "2025-04-26",
+          "keywords": [
+            "Test Task 3"
+          ],
+          "listId": "1",
+          "category": "graphics"
+        }
+      ],
+      "date": "4/26/2025"
     },
     {
       "id": "2",
       "name": "programming",
-      "status": "Doing"
+      "status": "Doing",
+      "tasks": [
+        {
+          "id": 3,
+          "name": "Fix bugs",
+          "priority": "Low",
+          "date": "2025-04-05",
+          "keywords": [
+            "code",
+            "bugs"
+          ],
+          "status": "done"
+        },
+        {
+          "id": 1744792087291,
+          "name": "ReactApp Provider",
+          "description": "Router ",
+          "status": "doing",
+          "priority": "High",
+          "date": "2025-04-02",
+          "keywords": [
+            "React",
+            "Router",
+            "Studyin"
+          ],
+          "listId": "2"
+        },
+        {
+          "id": 1745106653455,
+          "name": "Test Task",
+          "description": "Test Task",
+          "status": "todo",
+          "priority": "Medium",
+          "date": "2025-04-20",
+          "keywords": [
+            "Test Task"
+          ]
+        }
+      ]
     },
     {
       "id": "1745654853373",
       "name": "English",
       "status": "Done",
-      "date": "2025-04-26"
-    }
-  ],
-  "tasks": [
-    {
-      "id": 2,
-      "name": "Create banner",
-      "priority": "Medium",
-      "date": "2025-04-07",
-      "keywords": ["design", "banner"],
-      "status": "done",
-      "listId": "1",
-      "category": "graphics"
-    },
-    {
-      "id": 1744618356929,
-      "name": "ReactApp Provider",
-      "description": "fd",
-      "status": "done",
-      "priority": "High",
-      "date": "2025-04-14",
-      "keywords": [],
-      "listId": "1",
-      "category": "graphics"
-    },
-    {
-      "id": 1745688703225,
-      "name": "Test Task 3",
-      "description": "Test Task 3",
-      "status": "todo",
-      "priority": "High",
       "date": "2025-04-26",
-      "keywords": ["Test Task 3"],
-      "listId": "1",
-      "category": "graphics"
-    },
-    {
-      "id": 3,
-      "name": "Fix bugs",
-      "priority": "Low",
-      "date": "2025-04-05",
-      "keywords": ["code", "bugs"],
-      "status": "done",
-      "listId": "2",
-      "category": "programming"
-    },
-    {
-      "id": 1744792087291,
-      "name": "ReactApp Provider",
-      "description": "Router ",
-      "status": "doing",
-      "priority": "High",
-      "date": "2025-04-02",
-      "keywords": ["React", "Router", "Studyin"],
-      "listId": "2",
-      "category": "programming"
-    },
-    {
-      "id": 1745106653455,
-      "name": "Test Task",
-      "description": "Test Task",
-      "status": "todo",
-      "priority": "Medium",
-      "date": "2025-04-20",
-      "keywords": ["Test Task"],
-      "listId": "2",
-      "category": "programming"
+      "tasks": []
     }
   ]
 }
