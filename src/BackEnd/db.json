@@ -10,19 +10,6 @@
       "id": "2",
       "name": "programming",
       "status": "Doing"
-    },
-    {
-      "id": "1745654853373",
-      "name": "English",
-      "status": "Done",
-      "date": "2025-04-26"
-    },
-    {
-      "id": "1745773176457",
-      "name": "test",
-      "status": "To Do",
-      "date": "2025-04-27",
-      "tasks": []
     }
   ],
   "tasks": [
@@ -31,7 +18,10 @@
       "name": "Create banner",
       "priority": "Medium",
       "date": "2025-04-07",
-      "keywords": ["design", "banner"],
+      "keywords": [
+        "design",
+        "banner"
+      ],
       "status": "done",
       "listId": "1",
       "category": "graphics"
@@ -54,7 +44,9 @@
       "status": "todo",
       "priority": "High",
       "date": "2025-04-26",
-      "keywords": ["Test Task 3"],
+      "keywords": [
+        "Test Task 3"
+      ],
       "listId": "1",
       "category": "graphics"
     },
@@ -63,7 +55,10 @@
       "name": "Fix bugs",
       "priority": "Low",
       "date": "2025-04-05",
-      "keywords": ["code", "bugs"],
+      "keywords": [
+        "code",
+        "bugs"
+      ],
       "status": "done",
       "listId": "2",
       "category": "programming"
@@ -75,7 +70,11 @@
       "status": "doing",
       "priority": "High",
       "date": "2025-04-02",
-      "keywords": ["React", "Router", "Studyin"],
+      "keywords": [
+        "React",
+        "Router",
+        "Studyin"
+      ],
       "listId": "2",
       "category": "programming"
     },
@@ -86,130 +85,11 @@
       "status": "todo",
       "priority": "Medium",
       "date": "2025-04-20",
-      "keywords": ["Test Task"],
+      "keywords": [
+        "Test Task"
+      ],
       "listId": "2",
       "category": "programming"
-    },
-    {
-      "id": "1745771579656",
-      "name": "faaf",
-      "description": "fas",
-      "status": "done",
-      "priority": "High",
-      "date": "2025-04-27",
-      "keywords": [],
-      "listId": "1745654853373",
-      "category": "English"
-    },
-    {
-      "id": 1745773209068,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773209540,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773209874,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773210175,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773210448,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773210696,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773210916,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773211059,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773211240,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
-    },
-    {
-      "id": 1745773211723,
-      "name": "test",
-      "description": "fds",
-      "status": "done",
-      "priority": "High",
-      "date": "",
-      "keywords": [],
-      "listId": "1745773176457",
-      "category": "test"
     }
   ]
 }

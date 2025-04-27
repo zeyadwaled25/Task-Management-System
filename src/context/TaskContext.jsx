@@ -228,14 +228,14 @@ const TaskProvider = ({ children }) => {
   };
   const deleteList = async (listId) => {
     const listToDelete = lists.find((list) => list.id == listId);
-    // const tasksToDelete = tasks.filter((task) => task.listId == listId);
+    const tasksToDelete = tasks.filter((task) => task.listId == listId);
     try {
-      // tasksToDelete.forEach((task) => {
-      //   console.log(tasksUrl + "/" + task.id);
-      //   deleteTask(task.id);
-      // });
-      // await axios.delete(`${listsUrl}/${listId}`);
-      // setLists(lists.filter((list) => list.id !== listId));
+      tasksToDelete.forEach((task) => {
+        // console.log(tasksUrl + "/" + task.id);
+        deleteTask(task.id);
+      });
+      await axios.delete(`${listsUrl}/${listId}`);
+      setLists(lists.filter((list) => list.id !== listId));
       // delete all task of that deleted list
       showAlert({
         message: "List deleted successfully!",
