@@ -1,4 +1,3 @@
-// src/AppLayout.jsx
 import React, { useContext, useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -13,8 +12,8 @@ import EditListContent from "./components/Navbar/EditListContent";
 import { TaskContext } from "./context/TaskContext";
 import { useModal } from "./context/ModalContext";
 
-const AppLayout = ({ lists, searchQuery, setSearchQuery }) => {
-  const { addTaskToList } = useContext(TaskContext);
+const AppLayout = ({ searchQuery, setSearchQuery }) => {
+  const { addTaskToList, lists } = useContext(TaskContext);
   const { modalState } = useModal();
   const [selectedList, setSelectedList] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

@@ -1,8 +1,10 @@
 // src/pages/CreateList/CreateListPage.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { TaskContext } from "../../context/TaskContext";
 import { useNavigate } from "react-router-dom";
 
 function CreateListPage() {
+  const { addList } = useContext(TaskContext);
   const [name, setName] = useState("");
   const [status, setStatus] = useState("To Do");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // التاريخ الافتراضي هو اليوم
@@ -17,13 +19,10 @@ function CreateListPage() {
       date,
       tasks: [],
     };
-
-    await fetch("http://localhost:3000/lists", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newList),
-    });
-
+    addList(newList);
+    setName("");
+    setStatus("To Do");
+    setDate("");
     navigate("/lists-board");
   };
 
@@ -87,5 +86,4 @@ function CreateListPage() {
     </div>
   );
 }
-
 export default CreateListPage;

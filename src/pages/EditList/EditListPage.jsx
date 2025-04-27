@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { TaskContext } from "../../context/TaskContext";
 
-function EditListPage({ lists }) {
+function EditListPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { lists, updateList, loading, error } = useContext(TaskContext);
   const [name, setName] = useState("");
   const [status, setStatus] = useState("To Do");
   const [date, setDate] = useState("");
 
   useEffect(() => {
     if (lists && lists.length > 0) {
-      const list = lists.find((l) => l.id === id);
+      const list = lists.find((list) => list.id === id);
       if (list) {
         setName(list.name);
         setStatus(list.status);
@@ -20,7 +21,8 @@ function EditListPage({ lists }) {
     }
   }, [lists, id]);
 
-  if (!lists || lists.length === 0) {
+  // حالة الـ Loading
+  if (loading) {
     return (
       <div className="container py-5 text-center">
         <div className="spinner-border text-primary" role="status"></div>
@@ -29,8 +31,37 @@ function EditListPage({ lists }) {
     );
   }
 
-  const list = lists.find((l) => l.id === id);
+  // حالة الـ Error
+  if (error) {
+    return (
+      <div className="container py-5 text-center">
+        <h3 className="text-danger mb-3">❌ {error}</h3>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/lists-board")}
+        >
+          🔙 Back to Lists
+        </button>
+      </div>
+    );
+  }
 
+  // لو الـ lists جات فاضية
+  if (lists.length === 0) {
+    return (
+      <div className="container py-5 text-center">
+        <h3 className="text-warning mb-3">⚠️ No lists available</h3>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/lists-board")}
+        >
+          🔙 Back to Lists
+        </button>
+      </div>
+    );
+  }
+
+  const list = lists.find((l) => l.id === id);
   if (!list) {
     return (
       <div className="container py-5 text-center">
@@ -54,12 +85,7 @@ function EditListPage({ lists }) {
       date: date || new Date().toISOString().split("T")[0],
     };
 
-    await fetch(`http://localhost:3000/lists/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedList),
-    });
-
+    await updateList(updatedList);
     navigate("/lists-board");
   };
 
@@ -118,7 +144,7 @@ function EditListPage({ lists }) {
             className="btn btn-success px-4 py-2 mt-3"
             style={{ fontSize: "14px", borderRadius: "20px" }}
           >
-             Save Changes
+            Save Changes
           </button>
         </div>
       </form>

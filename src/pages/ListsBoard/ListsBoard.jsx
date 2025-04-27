@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { PencilSquare, Trash, Eye, Plus } from "react-bootstrap-icons";
 import "./ListsBoard.css";
+import { TaskContext } from "../../context/TaskContext"; // استبدلنا useContext بـ useTaskContext
 
-function ListsBoard({ lists, onDeleteList }) {
+function ListsBoard() {
+  const { lists, tasks,deleteList } = useContext(TaskContext); // جبنا lists و tasks من TaskContext
   const navigate = useNavigate();
   const statuses = ["To Do", "Doing", "Done"];
 
@@ -22,8 +24,7 @@ function ListsBoard({ lists, onDeleteList }) {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this list?")) {
-      await fetch(`http://localhost:3000/lists/${id}`, { method: "DELETE" });
-      onDeleteList(id);
+      await deleteList(id); // استخدمنا onDeleteList اللي جاية من router.jsx
     }
   };
 
@@ -63,15 +64,19 @@ function ListsBoard({ lists, onDeleteList }) {
 
               <div className="d-flex flex-column gap-3">
                 {listsForStatus.map((list) => {
-                  // ✅ حساب التاسكات المكتملة بشكل مرن
-                  const completedCount = list.tasks.filter(
-                    (t) =>
-                      t.done || (t.status && t.status.toLowerCase() === "done")
+                  // جبنا الـ tasks الخاصة بالـ list بناءً على listId
+                  const listTasks = tasks.filter(
+                    (task) => task.listId === list.id
+                  );
+
+                  // حساب التاسكات المكتملة
+                  const completedCount = listTasks.filter(
+                    (t) => t.status && t.status.toLowerCase() === "done"
                   ).length;
 
                   const completionPercentage =
-                    list.tasks.length > 0
-                      ? (completedCount / list.tasks.length) * 100
+                    listTasks.length > 0
+                      ? (completedCount / listTasks.length) * 100
                       : 0;
 
                   return (
@@ -116,26 +121,24 @@ function ListsBoard({ lists, onDeleteList }) {
                       <div className="d-flex justify-content-between align-items-center mb-1">
                         <span
                           className={`badge ${
-                            completedCount === list.tasks.length
+                            completedCount === listTasks.length
                               ? "bg-success"
                               : completedCount > 0
                               ? "bg-warning text-dark"
                               : "bg-secondary"
                           }`}
                         >
-                          {completedCount}/{list.tasks.length} Tasks
+                          {completedCount}/{listTasks.length} Tasks
                         </span>
-                        {/* نسبة مئوية صغيرة بجانبها */}
                         <small className="text-muted">
                           {Math.round(completionPercentage)}%
                         </small>
                       </div>
 
-                      {/* بروجرس بار */}
                       <div className="progress mt-2" style={{ height: "6px" }}>
                         <div
                           className={`progress-bar ${
-                            completedCount === list.tasks.length
+                            completedCount === listTasks.length
                               ? "bg-success"
                               : "bg-primary"
                           }`}

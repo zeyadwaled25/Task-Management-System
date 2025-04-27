@@ -4,11 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 
 function ListTasksPage() {
-  const { lists } = useContext(TaskContext);
+  const { lists, tasks } = useContext(TaskContext);
   const { id } = useParams();
   const navigate = useNavigate();
 
   const list = lists.find((l) => l.id === id);
+  const listTasks = tasks.filter((task) => task.listId === id); // جبنا الـ tasks بناءً على listId
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -31,7 +32,7 @@ function ListTasksPage() {
           className="btn btn-outline-secondary"
           onClick={() => navigate("/lists-board")}
         >
-           Back to Lists
+          Back to Lists
         </button>
       </div>
     );
@@ -45,7 +46,7 @@ function ListTasksPage() {
           className="btn btn-outline-primary"
           onClick={() => navigate("/lists-board")}
         >
-        <ArrowLeft/>
+          <ArrowLeft />
         </button>
       </div>
 
@@ -59,11 +60,11 @@ function ListTasksPage() {
         </span>
       </h6>
 
-      {list.tasks.length === 0 ? (
+      {listTasks.length === 0 ? (
         <div className="alert alert-warning">No tasks found for this list.</div>
       ) : (
         <ul className="list-group shadow-sm">
-          {list.tasks.map((task, index) => (
+          {listTasks.map((task, index) => (
             <li
               key={index}
               className="list-group-item d-flex justify-content-between align-items-center"
@@ -77,9 +78,9 @@ function ListTasksPage() {
                 <span>{task.name}</span>
                 <span
                   className={`badge ${
-                    task.status === "To Do"
+                    task.status === "todo"
                       ? "bg-primary"
-                      : task.status === "Doing"
+                      : task.status === "doing"
                       ? "bg-warning text-dark"
                       : "bg-success"
                   }`}

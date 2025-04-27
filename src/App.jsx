@@ -1,8 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { RouterProvider } from "react-router-dom";
 
 // Contexts
-import { TaskProvider, TaskContext } from "./context/TaskContext";
+import { TaskProvider } from "./context/TaskContext";
 import { ModalProvider } from "./context/ModalContext";
 import { AlertProvider } from "./context/AlertContext";
 
@@ -10,10 +10,9 @@ import { AlertProvider } from "./context/AlertContext";
 import createRouter from "./router";
 
 const AppWithContextRouter = () => {
-  const { lists } = useContext(TaskContext);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const router = createRouter(lists, setSearchQuery, searchQuery);
+  const router = createRouter(searchQuery, setSearchQuery);
 
   return <RouterProvider router={router} />;
 };
