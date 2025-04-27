@@ -67,7 +67,6 @@ function ManageListsPage({ lists, setLists }) {
         <h3 className={`mb-4 ${styles.sectionTitle}`}>Manage Lists</h3>
 
         <div className="mb-3">
-        
           <select
             className={`form-select ${styles.formSelect}`}
             onChange={handleSelectList}
