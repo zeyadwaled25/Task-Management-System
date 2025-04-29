@@ -24,7 +24,7 @@ const TaskProvider = ({ children }) => {
         setLists(response.data);
       })
       .catch(() => {
-        toast.error("❌ Failed to fetch lists, Please try again.", {
+        toast.error("Failed to fetch lists, Please try again.", {
           style: toastStyle,
         });
       });
@@ -36,7 +36,7 @@ const TaskProvider = ({ children }) => {
         setTasks(response.data);
       })
       .catch(() => {
-        toast.error("❌ Failed to fetch tasks, Please try again.", {
+        toast.error("Failed to fetch tasks, Please try again.", {
           style: toastStyle,
         });
       });
@@ -46,13 +46,13 @@ const TaskProvider = ({ children }) => {
     try {
       if (!lists || lists.length === 0)
         return toast.error(
-          "❌ Lists are not loaded yet, Please try again.",
+          "Lists are not loaded yet, Please try again.",
           { style: toastStyle, duration: 2000 }
         );
 
       const targetList = lists.find((list) => list.id == listId);
       if (!targetList)
-        return toast.error("❌ Target list not found.", {
+        return toast.error("Target list not found.", {
           style: toastStyle,
           duration: 2000,
         });
@@ -61,9 +61,9 @@ const TaskProvider = ({ children }) => {
       const response = await axios.post(tasksUrl, taskWithCategory);
       setTasks([...tasks, response.data]);
 
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ Task added successfully!
+          Task added successfully!
           <button
             onClick={() => {
               axios.delete(`${tasksUrl}/${response.data.id}`);
@@ -90,7 +90,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to add task, Please try again.", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to add task, Please try again.", { style: toastStyle, duration: 2000 });
     }
   };
 
@@ -104,9 +104,9 @@ const TaskProvider = ({ children }) => {
       await axios.put(`${tasksUrl}/${updatedTask.id}`, taskWithCategory);
 
       setTasks(tasks.map((task) => task.id === updatedTask.id ? taskWithCategory : task));
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ Task updated successfully!
+          Task updated successfully!
           <button
             onClick={() => {
               axios.put(`${tasksUrl}/${originalTask.id}`, originalTask);
@@ -133,7 +133,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to update task. ", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to update task. ", { style: toastStyle, duration: 2000 });
     }
   };
 
@@ -142,13 +142,13 @@ const TaskProvider = ({ children }) => {
     try {
       await axios.delete(`${tasksUrl}/${taskId}`);
       setTasks(tasks.filter((task) => task.id !== taskId));
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ Task deleted successfully!
+          Task deleted successfully!
           <button
             onClick={() => {
               axios.post(tasksUrl, taskToDelete);
-              setTasks([...tasks, taskToDelete]);
+              setTasks(currentTasks => [...currentTasks, taskToDelete]);
               toast.dismiss(t.id);
               toast("↩️ Task deletion undone.", { style: toastStyle, duration: 2000 });
             }}
@@ -171,7 +171,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to delete task. ", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to delete task. ", { style: toastStyle, duration: 2000 });
     }
   };
 
@@ -179,9 +179,9 @@ const TaskProvider = ({ children }) => {
     try {
       const response = await axios.post(listsUrl, newList);
       setLists([...lists, response.data]);
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ List added successfully!
+          List added successfully!
           <button
             onClick={() => {
               axios.delete(`${listsUrl}/${response.data.id}`);
@@ -208,7 +208,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to add list. ", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to add list. ", { style: toastStyle, duration: 2000 });
     }
   };
 
@@ -217,9 +217,9 @@ const TaskProvider = ({ children }) => {
     try {
       setLists(lists.map((list) => list.id === updatedList.id ? updatedList : list));
       await axios.put(`${listsUrl}/${updatedList.id}`, updatedList);
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ List updated successfully!
+          List updated successfully!
           <button
             onClick={() => {
               axios.put(`${listsUrl}/${originalList.id}`, originalList);
@@ -246,7 +246,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to update list. ", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to update list. ", { style: toastStyle, duration: 2000 });
     }
   };
 
@@ -257,9 +257,9 @@ const TaskProvider = ({ children }) => {
       for (const task of tasksToDelete) await deleteTask(task.id);
       await axios.delete(`${listsUrl}/${listId}`);
       setLists(lists.filter((list) => list.id !== listId));
-      toast((t) => (
+      toast.success((t) => (
         <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          ✅ List deleted successfully!
+          List deleted successfully!
           <button
             onClick={() => {
               axios.post(listsUrl, listToDelete);
@@ -286,7 +286,7 @@ const TaskProvider = ({ children }) => {
         style: toastStyle,
       });
     } catch {
-      toast.error("❌ Failed to delete list. ", { style: toastStyle, duration: 2000 });
+      toast.error("Failed to delete list. ", { style: toastStyle, duration: 2000 });
     }
   };
 
