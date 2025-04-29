@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 import { TaskContext } from "../context/TaskContext";
 import { useModal } from "../context/ModalContext";
-import { useAlert } from "../context/AlertContext";
+import { toast, Toaster } from "react-hot-toast";
+
 
 const EditTaskContent = ({ task }) => {
   const { lists, updateTask } = useContext(TaskContext);
   const { closeModal } = useModal();
-  const { showAlert } = useAlert();
 
   const [updatedTask, setUpdatedTask] = useState({
     id: task.id,
@@ -35,20 +35,25 @@ const EditTaskContent = ({ task }) => {
 
   const handleSubmit = () => {
     if (!lists || lists.length === 0) {
-      showAlert({
-        message:
-          "Lists are not loaded yet. Please wait a moment and try again.",
-        type: "error",
-        duration: 5,
+      toast.error("Lists are still loading... Try again in a sec.", {
+        icon: "⏳",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
       });
       return;
     }
 
     if (!updatedTask.listId) {
-      showAlert({
-        message: "Please select a list before updating the task.",
-        type: "error",
-        duration: 5,
+      toast.error("Please select a list before updating the task.", {
+        icon: "📝",
+        style: {
+          borderRadius: "10px",
+          background: "#1f1f1f",
+          color: "#fff",
+        },
       });
       return;
     }
@@ -68,6 +73,15 @@ const EditTaskContent = ({ task }) => {
 
     updateTask(taskToUpdate);
     closeModal();
+
+    toast.success("Task updated successfully!", {
+      icon: "🎉",
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
   };
 
   return (
@@ -202,6 +216,10 @@ const EditTaskContent = ({ task }) => {
           Update
         </button>
       </div>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+      />
     </>
   );
 };

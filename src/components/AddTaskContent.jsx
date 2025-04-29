@@ -1,12 +1,11 @@
 import React, { useState, useContext } from "react";
 import { TaskContext } from "../context/TaskContext";
 import { useModal } from "../context/ModalContext";
-import { useAlert } from "../context/AlertContext";
+import toast, { Toaster } from 'react-hot-toast';
 
 const AddTaskContent = ({ onAddTask }) => {
   const { lists, addTaskToList } = useContext(TaskContext);
   const { closeModal } = useModal();
-  const { showAlert } = useAlert();
 
   const [newTask, setNewTask] = useState({
     id: "",
@@ -35,23 +34,34 @@ const AddTaskContent = ({ onAddTask }) => {
 
   const handleSubmit = () => {
     if (!lists || lists.length === 0) {
-      showAlert({
-        message:
-          "Lists are not loaded yet. Please wait a moment and try again.",
-        type: "error",
-        duration: 5,
-      });
+      toast.error(
+        "lists are still loading, try again shortly!",
+        {
+          icon: '⏳',
+          style: {
+            borderRadius: '12px',
+            background: '#333',
+            color: '#fff',
+          },
+        }
+      );
       return;
     }
-
+    
     if (!newTask.listId) {
-      showAlert({
-        message: "Please select a list before adding a task.",
-        type: "error",
-        duration: 5,
-      });
+      toast.error(
+        "Pick a list to add your task.",
+        {
+          icon: '📝',
+          style: {
+            borderRadius: '12px',
+            background: '#333',
+            color: '#fff',
+          },
+        }
+      );
       return;
-    }
+    }    
 
     const task = {
       id: Date.now(),
@@ -67,8 +77,16 @@ const AddTaskContent = ({ onAddTask }) => {
 
     addTaskToList(newTask.listId, task);
     onAddTask({ ...task, listId: newTask.listId });
-
     closeModal();
+    
+    toast.success("Task updated successfully!", {
+      icon: "🎉",
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
   };
 
   return (
@@ -203,6 +221,10 @@ const AddTaskContent = ({ onAddTask }) => {
           Add
         </button>
       </div>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+      />
     </>
   );
 };

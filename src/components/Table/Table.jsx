@@ -8,6 +8,7 @@ import Options from "./Options/Options";
 
 function Table({ searchQuery }) {
   const { tasks } = useContext(TaskContext);
+  const [selectedTasks, setSelectedTasks] = useState([]);
 
   const tableSize = 5;
   const [pagination, setPagination] = useState({
@@ -47,7 +48,13 @@ function Table({ searchQuery }) {
   }, [tasks, filterOptions, searchQuery]);
 
   const handleCheckboxChange = (taskId) => {
-    // Not used in the current implementation, but keeping it for future use
+    setSelectedTasks(prevSelected => {
+      if (prevSelected.includes(taskId)) {
+        return prevSelected.filter(id => id !== taskId);
+      } else {
+        return [...prevSelected, taskId];
+      }
+    });
   };
 
   const handlePagination = (e, page) => {
@@ -119,13 +126,13 @@ function Table({ searchQuery }) {
                 .map((task) => (
                   <tr
                     key={task.id}
-                    className={task.selected ? "table-active" : ""}
+                    className={selectedTasks.includes(task.id) ? "table-active" : ""}
                   >
                     <td className="px-3 py-3">
                       <input
                         type="checkbox"
                         className="form-check-input"
-                        checked={task.selected || false}
+                        checked={selectedTasks.includes(task.id)}
                         onChange={() => handleCheckboxChange(task.id)}
                       />
                     </td>

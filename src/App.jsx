@@ -4,7 +4,6 @@ import { RouterProvider } from "react-router-dom";
 // Contexts
 import { TaskProvider } from "./context/TaskContext";
 import { ModalProvider } from "./context/ModalContext";
-import { AlertProvider } from "./context/AlertContext";
 
 // Router
 import createRouter from "./router";
@@ -18,13 +17,11 @@ const AppWithContextRouter = () => {
 };
 
 const App = () => (
-  <AlertProvider>
-    <ModalProvider>
-      <TaskProvider>
-        <AppWithContextRouter />
-      </TaskProvider>
-    </ModalProvider>
-  </AlertProvider>
+  <ModalProvider>
+    <TaskProvider>
+      <AppWithContextRouter />
+    </TaskProvider>
+  </ModalProvider>
 );
 
 export default App;
