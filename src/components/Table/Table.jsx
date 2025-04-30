@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState ,useContext} from "react";
+import { useEffect, useMemo, useState, useContext } from "react";
 import { TaskContext } from "../../context/TaskContext";
 import Filter from "./Filter";
 import "./Table.css";
@@ -7,7 +7,7 @@ import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
 function Table({ searchQuery }) {
-  const { tasks } = useContext(TaskContext);
+  const { tasks, updateTask } = useContext(TaskContext);
   const [selectedTasks, setSelectedTasks] = useState([]);
 
   const tableSize = 5;
@@ -47,14 +47,26 @@ function Table({ searchQuery }) {
       });
   }, [tasks, filterOptions, searchQuery]);
 
-  const handleCheckboxChange = (taskId) => {
-    setSelectedTasks(prevSelected => {
+  const handleCheckboxChange = async (taskId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return; // لو الـ task مش موجود، نطلع من الدالة
+
+    // تحديد الـ status الجديد بناءً على حالة الـ checkbox
+    const isChecked = !selectedTasks.includes(taskId);
+    const newStatus = isChecked ? "done" : "todo";
+
+    // تحديث الـ selectedTasks
+    setSelectedTasks((prevSelected) => {
       if (prevSelected.includes(taskId)) {
-        return prevSelected.filter(id => id !== taskId);
+        return prevSelected.filter((id) => id !== taskId);
       } else {
         return [...prevSelected, taskId];
       }
     });
+
+    // تحديث الـ task في TaskContext
+    const updatedTask = { ...task, status: newStatus };
+    await updateTask(updatedTask);
   };
 
   const handlePagination = (e, page) => {
@@ -126,7 +138,9 @@ function Table({ searchQuery }) {
                 .map((task) => (
                   <tr
                     key={task.id}
-                    className={selectedTasks.includes(task.id) ? "table-active" : ""}
+                    className={
+                      selectedTasks.includes(task.id) ? "table-active" : ""
+                    }
                   >
                     <td className="px-3 py-3">
                       <input
