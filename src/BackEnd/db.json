@@ -41,7 +41,7 @@
       "id": "1745943520860",
       "name": "Test Task",
       "description": "Test Task",
-      "status": "todo",
+      "status": "done",
       "priority": "High",
       "date": "2025-04-29",
       "keywords": [

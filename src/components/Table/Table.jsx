@@ -7,7 +7,7 @@ import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
 function Table({ searchQuery }) {
-  const { tasks, updateTask } = useContext(TaskContext);
+  const { tasks } = useContext(TaskContext);
   const [selectedTasks, setSelectedTasks] = useState([]);
 
   const tableSize = 5;
@@ -47,15 +47,7 @@ function Table({ searchQuery }) {
       });
   }, [tasks, filterOptions, searchQuery]);
 
-  const handleCheckboxChange = async (taskId) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task) return; // لو الـ task مش موجود، نطلع من الدالة
-
-    // تحديد الـ status الجديد بناءً على حالة الـ checkbox
-    const isChecked = !selectedTasks.includes(taskId);
-    const newStatus = isChecked ? "done" : "todo";
-
-    // تحديث الـ selectedTasks
+  const handleCheckboxChange = (taskId) => {
     setSelectedTasks((prevSelected) => {
       if (prevSelected.includes(taskId)) {
         return prevSelected.filter((id) => id !== taskId);
@@ -63,10 +55,6 @@ function Table({ searchQuery }) {
         return [...prevSelected, taskId];
       }
     });
-
-    // تحديث الـ task في TaskContext
-    const updatedTask = { ...task, status: newStatus };
-    await updateTask(updatedTask);
   };
 
   const handlePagination = (e, page) => {
