@@ -8,7 +8,7 @@ function ManageListsPage({ lists, setLists }) {
   const [selectedListId, setSelectedListId] = useState(null);
   const [editData, setEditData] = useState({
     name: "",
-    status: "To Do",
+    status: "Pending",
     date: "",
   });
   const [showTasks, setShowTasks] = useState(false);
@@ -49,7 +49,7 @@ function ManageListsPage({ lists, setLists }) {
     const updated = lists.filter((list) => list.id !== selectedListId);
     setLists(updated);
     setSelectedListId(null);
-    setEditData({ name: "", status: "To Do", date: "" });
+    setEditData({ name: "", status: "Pending", date: "" });
     setShowConfirmDelete(false);
     navigate("/lists-board");
   };

@@ -9,6 +9,7 @@ import Options from "./Options/Options";
 function Table({ searchQuery }) {
   const { tasks } = useContext(TaskContext);
   const [selectedTasks, setSelectedTasks] = useState([]);
+  const [viewMode, setViewMode] = useState("table"); // Add state for view mode (table or grid)
 
   const tableSize = 5;
   const [pagination, setPagination] = useState({
@@ -77,6 +78,16 @@ function Table({ searchQuery }) {
     });
   }, [filteredTasks.length]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 576px)");
+    const handleMediaChange = (e) => {
+      setViewMode(e.matches ? "grid" : "table");
+    };
+    handleMediaChange(mediaQuery);
+    mediaQuery.addEventListener("change", handleMediaChange);
+    return () => mediaQuery.removeEventListener("change", handleMediaChange);
+  }, []);
+
   return (
     <div className="table-container py-3 pb-md-0 px-4">
       <Filter
@@ -87,82 +98,136 @@ function Table({ searchQuery }) {
         <div className="p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="h5 text-dark mb-0">Recent Tasks</h3>
-            <div className="d-flex gap-1">
-              <button className="btn btn-light p-2 text-muted border-0">
+            <div className="view d-flex gap-1">
+              <button
+                className={`btn btn-light p-2 text-muted border-0 ${viewMode === "table" ? "active" : ""}`}
+                onClick={() => setViewMode("table")}
+              >
                 <ListUl size={24} />
               </button>
-              <button className="btn btn-light p-2 text-muted border-0">
-                <Grid3x3Gap />
+              <button
+                className={`btn btn-light p-2 text-muted border-0 ${viewMode === "grid" ? "active" : ""}`}
+                onClick={() => setViewMode("grid")}
+              >
+                <Grid3x3Gap size={24} />
               </button>
             </div>
           </div>
         </div>
         <div className="table-content">
-          <table className="table mb-0 table-borderless table-hover">
-            <thead className="border-bottom border-top">
-              <tr className="table-light">
-                <th className="px-3 py-2"></th>
-                <th className="text-secondary text-uppercase px-3 py-2">
-                  Task
-                </th>
-                <th className="text-secondary text-uppercase px-3 py-2">
-                  Priority
-                </th>
-                <th className="text-secondary text-uppercase px-3 py-2">
-                  Due Date
-                </th>
-                <th className="text-secondary text-uppercase px-3 py-2">
-                  Status
-                </th>
-                <th className="text-secondary text-uppercase px-3 py-2">
-                  Category
-                </th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
+          {viewMode === "table" ? (
+            <div className="table-responsive">
+              <table className="table mb-0 table-borderless table-hover">
+                <thead className="border-bottom border-top">
+                  <tr className="table-light">
+                    <th className="px-3 py-2"></th>
+                    <th className="text-secondary text-uppercase px-3 py-2">Task</th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-sm-table-cell">Priority</th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-md-table-cell">Due Date</th>
+                    <th className="text-secondary text-uppercase px-3 py-2">Status</th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-lg-table-cell">Category</th>
+                    <th className="px-3 py-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredTasks
+                    .slice(pagination.from, pagination.to)
+                    .map((task) => (
+                      <tr
+                        key={task.id}
+                        className={selectedTasks.includes(task.id) ? "table-active" : ""}
+                      >
+                        <td className="px-3 py-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={selectedTasks.includes(task.id)}
+                            onChange={() => handleCheckboxChange(task.id)}
+                          />
+                        </td>
+                        <td className="task-name px-3 py-3">{task.name}</td>
+                        <td className="px-3 py-3 d-none d-sm-table-cell">
+                          <span
+                            className={`badge fw-normal ${
+                              task.priority === "High"
+                                ? "bg-danger"
+                                : task.priority === "Medium"
+                                ? "bg-warning"
+                                : "bg-info"
+                            }`}
+                            style={{ borderRadius: "15px" }}
+                          >
+                            {task.priority}
+                          </span>
+                        </td>
+                        <td className="task-date px-3 py-3 d-none d-md-table-cell">{task.date}</td>
+                        <td className="px-3 py-3">
+                          <span
+                            className={`badge fw-normal ${
+                              task.status === "Completed"
+                                ? "bg-success"
+                                : task.status === "In Progress"
+                                ? "bg-warning"
+                                : "bg-secondary"
+                            }`}
+                            style={{ borderRadius: "15px" }}
+                          >
+                            {task.status}
+                          </span>
+                        </td>
+                        <td className="task-category px-3 py-3 d-none d-lg-table-cell">{task.category}</td>
+                        <td className="text-center task-options px-3 py-3">
+                          <Options task={task} />
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid-view p-3">
               {filteredTasks
                 .slice(pagination.from, pagination.to)
                 .map((task) => (
-                  <tr
+                  <div
                     key={task.id}
-                    className={
-                      selectedTasks.includes(task.id) ? "table-active" : ""
-                    }
+                    className={`card mb-3 ${selectedTasks.includes(task.id) ? "table-active" : ""}`}
                   >
-                    <td className="px-3 py-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={selectedTasks.includes(task.id)}
-                        onChange={() => handleCheckboxChange(task.id)}
-                      />
-                    </td>
-                    <td className="task-name px-3 py-3">{task.name}</td>
-                    <td className="px-3 py-3">
-                      <span
-                        className={`badge fw-normal ${
-                          task.priority === "High"
-                            ? "bg-danger"
-                            : task.priority === "Medium"
-                            ? "bg-warning"
-                            : "bg-info"
-                        }`}
-                        style={{ borderRadius: "15px" }}
-                      >
-                        {task.priority}
-                      </span>
-                    </td>
-                    <td className="task-date px-3 py-3">{task.date}</td>
-                    <td className="px-3 py-3">{task.status}</td>
-                    <td className="task-category px-3 py-3">{task.category}</td>
-                    <td className="text-center task-options px-3 py-3">
-                      <Options task={task} />
-                    </td>
-                  </tr>
+                    <div className="card-body">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex align-items-center">
+                          <input
+                            type="checkbox"
+                            className="form-check-input me-2"
+                            checked={selectedTasks.includes(task.id)}
+                            onChange={() => handleCheckboxChange(task.id)}
+                          />
+                          <h5 className="task-name mb-0">{task.name}</h5>
+                        </div>
+                        <Options task={task} />
+                      </div>
+                      <p className="task-date mb-1">Due: {task.date}</p>
+                      <p className="mb-1">
+                        <span
+                          className={`badge fw-normal ${
+                            task.priority === "High"
+                              ? "bg-danger"
+                              : task.priority === "Medium"
+                              ? "bg-warning"
+                              : "bg-info"
+                          }`}
+                          style={{ borderRadius: "15px" }}
+                        >
+                          {task.priority}
+                        </span>
+                      </p>
+                      <p className="mb-1">Status: {task.status}</p>
+                      <p className="task-category mb-0">Category: {task.category}</p>
+                    </div>
+                  </div>
                 ))}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
         <div className="view-all p-3 border-top">
           <Pagination
@@ -171,6 +236,7 @@ function Table({ searchQuery }) {
             className="pagination"
             onChange={handlePagination}
             page={pagination.currentPage}
+            size="small" // Use smaller pagination for mobile
           />
         </div>
       </div>

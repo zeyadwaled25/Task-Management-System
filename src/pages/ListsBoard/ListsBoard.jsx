@@ -7,15 +7,15 @@ import { TaskContext } from "../../context/TaskContext"; // استبدلنا use
 function ListsBoard() {
   const { lists, tasks,deleteList } = useContext(TaskContext); // جبنا lists و tasks من TaskContext
   const navigate = useNavigate();
-  const statuses = ["To Do", "Doing", "Done"];
+  const statuses = ["Pending", "In Progress", "Completed"];
 
   const getColor = (status) => {
     switch (status) {
-      case "To Do":
+      case "Pending":
         return "#0d6efd"; // Blue
-      case "Doing":
+      case "In Progress":
         return "#ffc107"; // Yellow
-      case "Done":
+      case "Completed":
         return "#198754"; // Green
       default:
         return "#6c757d"; // Grey
@@ -71,7 +71,7 @@ function ListsBoard() {
 
                   // حساب التاسكات المكتملة
                   const completedCount = listTasks.filter(
-                    (t) => t.status && t.status.toLowerCase() === "done"
+                    (t) => t.status && t.status.toLowerCase() === "Completed"
                   ).length;
 
                   const completionPercentage =
@@ -83,9 +83,9 @@ function ListsBoard() {
                     <div
                       key={list.id}
                       className={`list-card card border-0 shadow-sm p-3 mb-2 ${
-                        status === "To Do"
+                        status === "Pending"
                           ? "bg-light border-start border-primary border-5"
-                          : status === "Doing"
+                          : status === "In Progress"
                           ? "bg-white border-start border-warning border-5"
                           : "bg-success bg-opacity-10 border-start border-success border-5"
                       }`}

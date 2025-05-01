@@ -7,7 +7,7 @@ function EditListPage() {
   const navigate = useNavigate();
   const { lists, updateList, loading, error } = useContext(TaskContext);
   const [name, setName] = useState("");
-  const [status, setStatus] = useState("To Do");
+  const [status, setStatus] = useState("Pending");
   const [date, setDate] = useState("");
 
   useEffect(() => {

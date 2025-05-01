@@ -13,11 +13,11 @@ function ListTasksPage() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "To Do":
+      case "Pending":
         return "#0d6efd"; // الأزرق
-      case "Doing":
+      case "In Progress":
         return "#ffc107"; // الأصفر
-      case "Done":
+      case "Completed":
         return "#198754"; // الأخضر
       default:
         return "#6c757d"; // رمادي
@@ -78,9 +78,9 @@ function ListTasksPage() {
                 <span>{task.name}</span>
                 <span
                   className={`badge ${
-                    task.status === "todo"
+                    task.status === "Pending"
                       ? "bg-primary"
-                      : task.status === "doing"
+                      : task.status === "In Progress"
                       ? "bg-warning text-dark"
                       : "bg-success"
                   }`}

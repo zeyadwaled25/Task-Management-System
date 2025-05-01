@@ -11,7 +11,7 @@ const EditTaskContent = ({ task }) => {
     id: task.id,
     name: task.name || "",
     description: task.description || "",
-    status: task.status || "todo",
+    status: task.status || "Pending",
     priority: task.priority || "Low",
     date: task.date || "",
     keywords: task.keywords ? task.keywords.join(", ") : "",
@@ -104,7 +104,7 @@ const EditTaskContent = ({ task }) => {
       id: updatedTask.id,
       name: updatedTask.name.trim(),
       description: updatedTask.description.trim(),
-      status: updatedTask.status || "todo",
+      status: updatedTask.status || "Pending",
       priority: updatedTask.priority,
       date: updatedTask.date,
       keywords: updatedTask.keywords
@@ -240,9 +240,9 @@ const EditTaskContent = ({ task }) => {
               value={updatedTask.status}
               onChange={handleInputChange}
             >
-              <option value="todo">To do</option>
-              <option value="doing">Doing</option>
-              <option value="done">Done</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
         </form>

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 function CreateListPage() {
   const { addList } = useContext(TaskContext);
   const [name, setName] = useState("");
-  const [status, setStatus] = useState("To Do");
+  const [status, setStatus] = useState("Pending");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // التاريخ الافتراضي هو اليوم
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ function CreateListPage() {
     };
     addList(newList);
     setName("");
-    setStatus("To Do");
+    setStatus("Pending");
     setDate("");
     navigate("/lists-board");
   };

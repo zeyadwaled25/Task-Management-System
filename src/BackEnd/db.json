@@ -3,22 +3,22 @@
     {
       "id": "1",
       "name": "graphics",
-      "status": "To Do",
+      "status": "Pending",
       "date": "2025-04-26"
     },
     {
       "id": "2",
       "name": "programming",
-      "status": "Doing"
+      "status": "Completed"
     }
   ],
   "tasks": [
     {
       "id": "1744618356929",
-      "name": "ReactApp Provider ",
+      "name": "ReactApp Provider",
       "description": "",
-      "status": "done",
-      "priority": "High",
+      "status": "Completed",
+      "priority": "Medium",
       "date": "2025-04-14",
       "keywords": [],
       "listId": "1",
@@ -27,13 +27,14 @@
     {
       "id": "3",
       "name": "Fix bugs",
+      "description": "",
+      "status": "In Progress",
       "priority": "Low",
       "date": "2025-04-05",
       "keywords": [
         "code",
         "bugs"
       ],
-      "status": "done",
       "listId": "2",
       "category": "programming"
     },
@@ -41,7 +42,7 @@
       "id": "1745943520860",
       "name": "Test Task",
       "description": "Test Task",
-      "status": "done",
+      "status": "In Progress",
       "priority": "High",
       "date": "2025-04-29",
       "keywords": [

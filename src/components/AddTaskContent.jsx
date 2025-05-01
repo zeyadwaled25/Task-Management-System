@@ -11,7 +11,7 @@ const AddTaskContent = ({ onAddTask }) => {
     id: "",
     name: "",
     description: "",
-    status: "todo",
+    status: "Pending",
     priority: "High",
     date: "",
     keywords: "",
@@ -107,7 +107,7 @@ const AddTaskContent = ({ onAddTask }) => {
       id: Date.now(),
       name: newTask.name.trim(),
       description: newTask.description.trim(),
-      status: newTask.status || "todo",
+      status: newTask.status || "Pending",
       priority: newTask.priority,
       date: newTask.date,
       keywords: newTask.keywords
@@ -242,9 +242,9 @@ const AddTaskContent = ({ onAddTask }) => {
               value={newTask.status}
               onChange={handleInputChange}
             >
-              <option value="todo">To do</option>
-              <option value="doing">Doing</option>
-              <option value="done">Done</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
         </form>

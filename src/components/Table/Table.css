@@ -1,6 +1,8 @@
 .table-container {
   background-color: #ffffff;
   border-radius: 8px;
+  max-width: 100%;
+  overflow-x: auto; /* Ensure container doesn't overflow */
 }
 
 .filter .dropdown-menu {
@@ -10,14 +12,17 @@
   border-radius: 0.25rem;
   background-color: #fff;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  min-width: 200px; /* Ensure dropdowns are wide enough */
 }
 
 .filter .dropdown-item {
   cursor: pointer;
+  padding: 0.5rem 1rem; /* Increase touch area */
+  font-size: 0.9rem;
 }
 
 .filter .dropdown-item:hover {
-  background-color: #ccc;
+  background-color: #e9ecef;
 }
 
 .filter .dropdown-item.active {
@@ -28,18 +33,23 @@
 .table .btn {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
+  touch-action: manipulation; /* Improve touch responsiveness */
 }
 
 .filter-content {
   margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap; /* Allow filter items to wrap on small screens */
+  gap: 0.5rem;
 }
 
 .filter .btn.btn-primary {
   border-color: #0d6efd;
+  padding: 0.5rem 1rem; /* Increase touch area */
 }
 
 .badge {
-  font-size: 85%;
+  font-size: 0.75rem; /* Slightly smaller badges for mobile */
   padding: 0.35em 0.65em;
 }
 
@@ -48,24 +58,31 @@
 }
 
 .pagination {
-  margin-bottom: 0;
+  margin: 0 auto;
+  width: fit-content;
 }
+
 .task-name {
   font-weight: 500;
+  font-size: 1rem; /* Adjust font size */
 }
+
 .task-date,
 .task-category {
   color: #6b7280 !important;
+  font-size: 0.875rem; /* Smaller text for mobile */
 }
 
 .task-options {
   color: #6b7280 !important;
   transition: 0.3s;
 }
+
 .task-options svg:hover {
   color: #374151 !important;
   cursor: pointer;
 }
+
 .view-all p {
   font-weight: 500;
   cursor: pointer;
@@ -73,7 +90,77 @@
   margin: 0 auto;
 }
 
-.pagination {
-  margin: 0 auto;
-  width: fit-content;
+/* Grid view styles */
+.grid-view .card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grid-view .card-body {
+  padding: 1rem;
+}
+
+.grid-view .task-name {
+  font-size: 1.1rem;
+}
+
+.grid-view .task-date,
+.grid-view .task-category {
+  font-size: 0.85rem;
+}
+.table-content .view .btn.active {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 1rem; /* Reduce padding on mobile */
+  }
+
+  .table-content {
+    font-size: 0.875rem; /* Smaller text for tables */
+  }
+
+  .filter-content {
+    flex-direction: column; /* Stack filters vertically */
+    align-items: stretch;
+  }
+
+  .filter .btn {
+    width: 100%; /* Full-width buttons for filters */
+    margin-bottom: 0.5rem;
+  }
+
+  .table .btn {
+    padding: 0.5rem; /* Larger touch area for buttons */
+  }
+
+  .pagination {
+    transform: scale(0.9); /* Slightly smaller pagination */
+  }
+
+  .grid-view .card {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .task-name {
+    font-size: 0.9rem;
+  }
+
+  .task-date,
+  .task-category {
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+  }
+
+  .table-content .btn {
+    padding: 0.4rem; /* Adjust button padding */
+  }
 }
