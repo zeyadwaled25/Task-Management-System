@@ -9,7 +9,8 @@
     {
       "id": "2",
       "name": "programming",
-      "status": "Completed"
+      "status": "Pending",
+      "date": "2025-05-02"
     }
   ],
   "tasks": [
@@ -17,8 +18,8 @@
       "id": "1744618356929",
       "name": "ReactApp Provider",
       "description": "",
-      "status": "Completed",
-      "priority": "Medium",
+      "status": "Pending",
+      "priority": "High",
       "date": "2025-04-14",
       "keywords": [],
       "listId": "1",
@@ -28,7 +29,7 @@
       "id": "3",
       "name": "Fix bugs",
       "description": "",
-      "status": "In Progress",
+      "status": "Pending",
       "priority": "Low",
       "date": "2025-04-05",
       "keywords": [
@@ -42,7 +43,7 @@
       "id": "1745943520860",
       "name": "Test Task",
       "description": "Test Task",
-      "status": "In Progress",
+      "status": "Pending",
       "priority": "High",
       "date": "2025-04-29",
       "keywords": [

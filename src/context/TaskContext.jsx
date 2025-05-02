@@ -10,6 +10,96 @@ const toastStyle = {
   color: "#fff",
 };
 
+// دوال مساعدة للـ toast
+const handleSuccessToast = (message, onUndo, duration = 2000) => {
+  toast.success(
+    (t) => (
+      <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
+        {message}
+        <button
+          onClick={() => {
+            onUndo();
+            toast.dismiss(t.id);
+            toast("↩️ Action undone.", { style: toastStyle, duration: 2000 });
+          }}
+          style={{
+            marginLeft: 10,
+            background: "#333",
+            color: "#fff",
+            padding: "2px 6px",
+            borderRadius: "12px",
+            border: "1px solid #555",
+            outline: "none",
+            cursor: "pointer",
+          }}
+        >
+          Undo
+        </button>
+      </span>
+    ),
+    { duration, style: toastStyle }
+  );
+};
+
+const handleErrorToast = (message, duration = 2000) => {
+  toast.error(message, { style: toastStyle, duration });
+};
+
+// دالة مساعدة لتحديث الـ List بناءً على حالة التاسكات
+const updateListStatus = async (
+  listTasks,
+  targetList,
+  lists,
+  setLists,
+  listsUrl
+) => {
+  const allCompleted = listTasks.every((task) => task.status === "Completed");
+  const allPending = listTasks.every((task) => task.status === "Pending");
+  const allInProgress = listTasks.every(
+    (task) => task.status === "In Progress"
+  );
+
+  console.log("updateListStatus - listTasks:", listTasks);
+  console.log(
+    "allPending:",
+    allPending,
+    "allCompleted:",
+    allCompleted,
+    "allInProgress:",
+    allInProgress
+  );
+
+  let newStatus = targetList.status;
+  if (allCompleted && targetList.status !== "Completed") {
+    newStatus = "Completed";
+  } else if (allPending && targetList.status !== "Pending") {
+    newStatus = "Pending";
+  } else if (allInProgress && targetList.status !== "In Progress") {
+    newStatus = "In Progress";
+  }
+
+  if (newStatus !== targetList.status) {
+    const updatedList = { ...targetList, status: newStatus };
+    await axios.put(`${listsUrl}/${targetList.id}`, updatedList);
+    const response = await axios.get(listsUrl); // Fetch جديد للتأكد
+    setLists(response.data);
+    console.log(`List updated to ${newStatus}:`, updatedList);
+  }
+};
+
+// دالة مساعدة لتحديث التاسكات باستخدام Promise.all
+const updateTasksWithPromise = async (tasksToUpdate, newStatus, updateTask) => {
+  const updatePromises = tasksToUpdate.map(async (task) => {
+    if (task.status !== newStatus) {
+      const updatedTask = { ...task, status: newStatus };
+      await updateTask(updatedTask);
+      return updatedTask;
+    }
+    return task;
+  });
+  await Promise.all(updatePromises);
+};
+
 const TaskProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -17,161 +107,115 @@ const TaskProvider = ({ children }) => {
   const tasksUrl = "http://localhost:3000/tasks";
 
   useEffect(() => {
-    // Fetch lists
     axios
       .get(listsUrl)
-      .then((response) => {
-        setLists(response.data);
-      })
-      .catch(() => {
-        toast.error("Failed to fetch lists, Please try again.", {
-          style: toastStyle,
-        });
-      });
-
-    // Fetch tasks
+      .then((response) => setLists(response.data))
+      .catch(() =>
+        handleErrorToast("Failed to fetch lists, Please try again.")
+      );
     axios
       .get(tasksUrl)
-      .then((response) => {
-        setTasks(response.data);
-      })
-      .catch(() => {
-        toast.error("Failed to fetch tasks, Please try again.", {
-          style: toastStyle,
-        });
-      });
+      .then((response) => setTasks(response.data))
+      .catch(() =>
+        handleErrorToast("Failed to fetch tasks, Please try again.")
+      );
   }, []);
 
   const addTaskToList = async (listId, newTask) => {
     try {
-      if (!lists || lists.length === 0)
-        return toast.error(
+      if (!lists || !lists.length)
+        return handleErrorToast(
           "Lists are not loaded yet, Please try again.",
-          { style: toastStyle, duration: 2000 }
+          2000
         );
 
       const targetList = lists.find((list) => list.id == listId);
-      if (!targetList)
-        return toast.error("Target list not found.", {
-          style: toastStyle,
-          duration: 2000,
-        });
+      if (!targetList) return handleErrorToast("Target list not found.", 2000);
 
-      const taskWithCategory = { ...newTask, listId, category: targetList.name };
+      const taskWithCategory = {
+        ...newTask,
+        listId,
+        category: targetList.name,
+        status: targetList.status,
+      };
       const response = await axios.post(tasksUrl, taskWithCategory);
       setTasks([...tasks, response.data]);
 
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          Task added successfully!
-          <button
-            onClick={() => {
-              axios.delete(`${tasksUrl}/${response.data.id}`);
-              setTasks(tasks.filter((task) => task.id !== response.data.id));
-              toast.dismiss(t.id);
-              toast("↩️ Task addition undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+      handleSuccessToast("Task added successfully!", () => {
+        axios.delete(`${tasksUrl}/${response.data.id}`);
+        setTasks(tasks.filter((task) => task.id !== response.data.id));
       });
     } catch {
-      toast.error("Failed to add task, Please try again.", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to add task, Please try again.", 2000);
     }
   };
 
   const updateTask = async (updatedTask) => {
-    const originalTask = tasks.find((task) => task.id == updatedTask.id);
     try {
+      const originalTask = tasks.find((task) => task.id == updatedTask.id);
       const targetList = lists.find((list) => list.id == updatedTask.listId);
       if (!targetList) throw new Error("Target list not found");
 
-      const taskWithCategory = { ...updatedTask, category: updatedTask.category || targetList.name };
+      const taskWithCategory = {
+        ...updatedTask,
+        category: updatedTask.category || targetList.name,
+      };
       await axios.put(`${tasksUrl}/${updatedTask.id}`, taskWithCategory);
 
-      setTasks(tasks.map((task) => task.id === updatedTask.id ? taskWithCategory : task));
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          Task updated successfully!
-          <button
-            onClick={() => {
-              axios.put(`${tasksUrl}/${originalTask.id}`, originalTask);
-              setTasks(tasks.map((task) => task.id === updatedTask.id ? originalTask : task));
-              toast.dismiss(t.id);
-              toast("↩️ Task update undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+      const newTasks = tasks.map((task) =>
+        task.id === updatedTask.id ? taskWithCategory : task
+      );
+      setTasks(newTasks);
+
+      const updatedListTasks = newTasks.filter(
+        (task) => task.listId == updatedTask.listId
+      );
+      await updateListStatus(
+        updatedListTasks,
+        targetList,
+        lists,
+        setLists,
+        listsUrl
+      );
+
+      handleSuccessToast("Task updated successfully!", async () => {
+        await axios.put(`${tasksUrl}/${originalTask.id}`, originalTask);
+        const revertedTasks = tasks.map((task) =>
+          task.id === updatedTask.id ? originalTask : task
+        );
+        setTasks(revertedTasks);
+
+        const revertedListTasks = revertedTasks.filter(
+          (task) => task.listId == originalTask.listId
+        );
+        const originalList = lists.find(
+          (list) => list.id == originalTask.listId
+        );
+        await updateListStatus(
+          revertedListTasks,
+          originalList,
+          lists,
+          setLists,
+          listsUrl
+        );
       });
     } catch {
-      toast.error("Failed to update task. ", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to update task.", 2000);
     }
   };
 
   const deleteTask = async (taskId) => {
-    const taskToDelete = tasks.find((task) => task.id == taskId);
     try {
+      const taskToDelete = tasks.find((task) => task.id == taskId);
       await axios.delete(`${tasksUrl}/${taskId}`);
       setTasks(tasks.filter((task) => task.id !== taskId));
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          Task deleted successfully!
-          <button
-            onClick={() => {
-              axios.post(tasksUrl, taskToDelete);
-              setTasks(currentTasks => [...currentTasks, taskToDelete]);
-              toast.dismiss(t.id);
-              toast("↩️ Task deletion undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+
+      handleSuccessToast("Task deleted successfully!", () => {
+        axios.post(tasksUrl, taskToDelete);
+        setTasks((currentTasks) => [...currentTasks, taskToDelete]);
       });
     } catch {
-      toast.error("Failed to delete task. ", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to delete task.", 2000);
     }
   };
 
@@ -179,128 +223,90 @@ const TaskProvider = ({ children }) => {
     try {
       const response = await axios.post(listsUrl, newList);
       setLists([...lists, response.data]);
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          List added successfully!
-          <button
-            onClick={() => {
-              axios.delete(`${listsUrl}/${response.data.id}`);
-              setLists(lists.filter((list) => list.id !== response.data.id));
-              toast.dismiss(t.id);
-              toast("↩️ List addition undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+
+      handleSuccessToast("List added successfully!", () => {
+        axios.delete(`${listsUrl}/${response.data.id}`);
+        setLists(lists.filter((list) => list.id !== response.data.id));
       });
     } catch {
-      toast.error("Failed to add list. ", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to add list.", 2000);
     }
   };
 
   const updateList = async (updatedList) => {
-    const originalList = lists.find((list) => list.id == updatedList.id);
     try {
-      setLists(lists.map((list) => list.id === updatedList.id ? updatedList : list));
+      const originalList = lists.find((list) => list.id == updatedList.id);
+      const originalTasks = [...tasks];
+      setLists(
+        lists.map((list) => (list.id === updatedList.id ? updatedList : list))
+      );
       await axios.put(`${listsUrl}/${updatedList.id}`, updatedList);
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          List updated successfully!
-          <button
-            onClick={() => {
-              axios.put(`${listsUrl}/${originalList.id}`, originalList);
-              setLists(lists.map((list) => list.id === updatedList.id ? originalList : list));
-              toast.dismiss(t.id);
-              toast("↩️ List update undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+
+      const tasksToUpdate = tasks.filter(
+        (task) => task.listId == updatedList.id
+      );
+      await updateTasksWithPromise(
+        tasksToUpdate,
+        updatedList.status,
+        updateTask
+      );
+
+      handleSuccessToast("List updated successfully!", async () => {
+        await axios.put(`${listsUrl}/${originalList.id}`, originalList);
+        setLists(
+          lists.map((list) =>
+            list.id === updatedList.id ? originalList : list
+          )
+        );
+
+        const tasksToRevert = tasks.filter(
+          (task) => task.listId == originalList.id
+        );
+        await updateTasksWithPromise(
+          tasksToRevert,
+          originalList.status,
+          updateTask
+        );
       });
     } catch {
-      toast.error("Failed to update list. ", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to update list.", 2000);
     }
   };
 
   const deleteList = async (listId) => {
-    const listToDelete = lists.find((list) => list.id == listId);
-    const tasksToDelete = tasks.filter((task) => task.listId == listId);
     try {
+      const listToDelete = lists.find((list) => list.id == listId);
+      const tasksToDelete = tasks.filter((task) => task.listId == listId);
       for (const task of tasksToDelete) await deleteTask(task.id);
       await axios.delete(`${listsUrl}/${listId}`);
       setLists(lists.filter((list) => list.id !== listId));
-      toast.success((t) => (
-        <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>
-          List deleted successfully!
-          <button
-            onClick={() => {
-              axios.post(listsUrl, listToDelete);
-              setLists([...lists, listToDelete]);
-              toast.dismiss(t.id);
-              toast("↩️ List deletion undone.", { style: toastStyle, duration: 2000 });
-            }}
-            style={{
-              marginLeft: 10,
-              background: "#333",
-              color: "#fff",
-              padding: "2px 6px",
-              borderRadius: "12px",
-              border: '1px solid #555',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Undo
-          </button>
-        </span>
-      ), {
-        duration: 2000,
-        style: toastStyle,
+
+      handleSuccessToast("List deleted successfully!", () => {
+        axios.post(listsUrl, listToDelete);
+        setLists([...lists, listToDelete]);
       });
     } catch {
-      toast.error("Failed to delete list. ", { style: toastStyle, duration: 2000 });
+      handleErrorToast("Failed to delete list.", 2000);
     }
   };
 
   return (
     <>
       <TaskContext.Provider
-        value={{ lists, tasks, addTaskToList, updateTask, deleteTask, addList, updateList, deleteList }}
+        value={{
+          lists,
+          tasks,
+          addTaskToList,
+          updateTask,
+          deleteTask,
+          addList,
+          updateList,
+          deleteList,
+        }}
       >
         {children}
       </TaskContext.Provider>
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-      />
+      <Toaster position="top-right" reverseOrder={false} />
     </>
   );
 };

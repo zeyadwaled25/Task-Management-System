@@ -15,7 +15,7 @@ function Filter({ filterOptions, setFilterOptions }) {
   };
 
   const dropdownOptions = {
-    status: ["todo", "doing", "done"],
+    status: ["pending", "In Progress", "Completed"],
     priority: ["Low", "Medium", "High"],
     date: ["Newest", "Oldest"],
   };

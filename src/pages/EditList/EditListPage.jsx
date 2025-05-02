@@ -122,9 +122,9 @@ function EditListPage() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option>To Do</option>
-            <option>Doing</option>
-            <option>Done</option>
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Completed</option>
           </select>
         </div>
 

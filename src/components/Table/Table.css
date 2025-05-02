@@ -164,3 +164,59 @@
     padding: 0.4rem; /* Adjust button padding */
   }
 }
+/* Styling للدايرة */
+/* Styling للدايرة */
+.completion-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: transparent; /* نضمن إن مفيش لون خلفية لما الدايرة مش completed */
+}
+
+/* لما الـ task يبقى Completed */
+.completion-circle.completed {
+  border-color: #28a745; /* لون الحدود أخضر */
+  background-color: transparent; /* نلغي الخلفية عشان الأيقونة هي اللي هتظهر */
+}
+
+/* Styling للأيقونة CheckCircleFill */
+.completion-circle .checkmark {
+  color: #28a745; /* لون الأيقونة أخضر */
+  font-size: 16px; /* نكبر الأيقونة شوية عشان تكون متناسقة مع الدايرة */
+}
+
+/* لما نعمل hover على الدايرة */
+.completion-circle:hover {
+  border-color: #6b7280; /* لون الحدود يتغير لما نعمل hover */
+}
+
+/* إخفاء الـ checkbox بشكل افتراضي */
+.checkbox-cell {
+  visibility: hidden;
+}
+
+/* إظهار الـ checkbox لما نعمل hover على الـ row (في الـ Table view) */
+.table-hover tbody tr:hover .checkbox-cell {
+  visibility: visible;
+}
+
+/* إظهار الـ checkbox لما نعمل hover على الـ card (في الـ Grid view) */
+.grid-view .card:hover .checkbox-cell {
+  visibility: visible;
+}
+
+/* تحسين شكل الـ row لما نعمل hover */
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* تحسين شكل الـ card لما نعمل hover */
+.grid-view .card:hover {
+  background-color: #f8f9fa;
+}

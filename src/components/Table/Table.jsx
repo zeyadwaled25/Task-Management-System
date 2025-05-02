@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState, useContext } from "react";
 import { TaskContext } from "../../context/TaskContext";
 import Filter from "./Filter";
 import "./Table.css";
-import { Grid3x3Gap, ListUl } from "react-bootstrap-icons";
+import { Grid3x3Gap, ListUl, CheckCircleFill } from "react-bootstrap-icons"; // أضفنا CheckCircleFill
 import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
 function Table({ searchQuery }) {
-  const { tasks } = useContext(TaskContext);
+  const { tasks, updateTask } = useContext(TaskContext);
   const [selectedTasks, setSelectedTasks] = useState([]);
-  const [viewMode, setViewMode] = useState("table"); // Add state for view mode (table or grid)
+  const [viewMode, setViewMode] = useState("table");
 
   const tableSize = 5;
   const [pagination, setPagination] = useState({
@@ -48,14 +48,11 @@ function Table({ searchQuery }) {
       });
   }, [tasks, filterOptions, searchQuery]);
 
-  const handleCheckboxChange = (taskId) => {
-    setSelectedTasks((prevSelected) => {
-      if (prevSelected.includes(taskId)) {
-        return prevSelected.filter((id) => id !== taskId);
-      } else {
-        return [...prevSelected, taskId];
-      }
-    });
+  // تعديل الدالة عشان تعمل toggle بين "Completed" و "pending"
+  const handleMarkAsCompleted = async (task) => {
+    const newStatus = task.status === "Completed" ? "pending" : "Completed";
+    const updatedTask = { ...task, status: newStatus };
+    await updateTask(updatedTask);
   };
 
   const handlePagination = (e, page) => {
@@ -100,13 +97,17 @@ function Table({ searchQuery }) {
             <h3 className="h5 text-dark mb-0">Recent Tasks</h3>
             <div className="view d-flex gap-1">
               <button
-                className={`btn btn-light p-2 text-muted border-0 ${viewMode === "table" ? "active" : ""}`}
+                className={`btn btn-light p-2 text-muted border-0 ${
+                  viewMode === "table" ? "active" : ""
+                }`}
                 onClick={() => setViewMode("table")}
               >
                 <ListUl size={24} />
               </button>
               <button
-                className={`btn btn-light p-2 text-muted border-0 ${viewMode === "grid" ? "active" : ""}`}
+                className={`btn btn-light p-2 text-muted border-0 ${
+                  viewMode === "grid" ? "active" : ""
+                }`}
                 onClick={() => setViewMode("grid")}
               >
                 <Grid3x3Gap size={24} />
@@ -120,12 +121,23 @@ function Table({ searchQuery }) {
               <table className="table mb-0 table-borderless table-hover">
                 <thead className="border-bottom border-top">
                   <tr className="table-light">
-                    <th className="px-3 py-2"></th>
-                    <th className="text-secondary text-uppercase px-3 py-2">Task</th>
-                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-sm-table-cell">Priority</th>
-                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-md-table-cell">Due Date</th>
-                    <th className="text-secondary text-uppercase px-3 py-2">Status</th>
-                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-lg-table-cell">Category</th>
+                    <th className="px-3 py-2"></th> {/* عمود الدايرة */}
+                    <th className="px-3 py-2"></th> {/* عمود الـ checkbox */}
+                    <th className="text-secondary text-uppercase px-3 py-2">
+                      Task
+                    </th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-sm-table-cell">
+                      Priority
+                    </th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-md-table-cell">
+                      Due Date
+                    </th>
+                    <th className="text-secondary text-uppercase px-3 py-2">
+                      Status
+                    </th>
+                    <th className="text-secondary text-uppercase px-3 py-2 d-none d-lg-table-cell">
+                      Category
+                    </th>
                     <th className="px-3 py-2"></th>
                   </tr>
                 </thead>
@@ -135,15 +147,21 @@ function Table({ searchQuery }) {
                     .map((task) => (
                       <tr
                         key={task.id}
-                        className={selectedTasks.includes(task.id) ? "table-active" : ""}
+                        className={
+                          selectedTasks.includes(task.id) ? "table-active" : ""
+                        }
                       >
                         <td className="px-3 py-3">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            checked={selectedTasks.includes(task.id)}
-                            onChange={() => handleCheckboxChange(task.id)}
-                          />
+                          <div
+                            className={`completion-circle ${
+                              task.status === "Completed" ? "completed" : ""
+                            }`}
+                            onClick={() => handleMarkAsCompleted(task)}
+                          >
+                            {task.status === "Completed" && (
+                              <CheckCircleFill className="checkmark" />
+                            )}
+                          </div>
                         </td>
                         <td className="task-name px-3 py-3">{task.name}</td>
                         <td className="px-3 py-3 d-none d-sm-table-cell">
@@ -160,7 +178,9 @@ function Table({ searchQuery }) {
                             {task.priority}
                           </span>
                         </td>
-                        <td className="task-date px-3 py-3 d-none d-md-table-cell">{task.date}</td>
+                        <td className="task-date px-3 py-3 d-none d-md-table-cell">
+                          {task.date}
+                        </td>
                         <td className="px-3 py-3">
                           <span
                             className={`badge fw-normal ${
@@ -175,7 +195,9 @@ function Table({ searchQuery }) {
                             {task.status}
                           </span>
                         </td>
-                        <td className="task-category px-3 py-3 d-none d-lg-table-cell">{task.category}</td>
+                        <td className="task-category px-3 py-3 d-none d-lg-table-cell">
+                          {task.category}
+                        </td>
                         <td className="text-center task-options px-3 py-3">
                           <Options task={task} />
                         </td>
@@ -191,17 +213,23 @@ function Table({ searchQuery }) {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className={`card mb-3 ${selectedTasks.includes(task.id) ? "table-active" : ""}`}
+                    className={`card mb-3 ${
+                      selectedTasks.includes(task.id) ? "table-active" : ""
+                    }`}
                   >
                     <div className="card-body">
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="d-flex align-items-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input me-2"
-                            checked={selectedTasks.includes(task.id)}
-                            onChange={() => handleCheckboxChange(task.id)}
-                          />
+                          <div
+                            className={`completion-circle me-2 ${
+                              task.status === "Completed" ? "completed" : ""
+                            }`}
+                            onClick={() => handleMarkAsCompleted(task)}
+                          >
+                            {task.status === "Completed" && (
+                              <CheckCircleFill className="checkmark" />
+                            )}
+                          </div>
                           <h5 className="task-name mb-0">{task.name}</h5>
                         </div>
                         <Options task={task} />
@@ -222,7 +250,9 @@ function Table({ searchQuery }) {
                         </span>
                       </p>
                       <p className="mb-1">Status: {task.status}</p>
-                      <p className="task-category mb-0">Category: {task.category}</p>
+                      <p className="task-category mb-0">
+                        Category: {task.category}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -236,7 +266,7 @@ function Table({ searchQuery }) {
             className="pagination"
             onChange={handlePagination}
             page={pagination.currentPage}
-            size="small" // Use smaller pagination for mobile
+            size="small"
           />
         </div>
       </div>
