@@ -1,27 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { RouterProvider } from "react-router-dom";
 
 // Contexts
 import { TaskProvider } from "./context/TaskContext";
 import { ModalProvider } from "./context/ModalContext";
+import { SearchProvider } from "./context/SearchContext";
 
 // Router
 import createRouter from "./router";
 
 const AppWithContextRouter = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const router = createRouter(searchQuery, setSearchQuery);
-
+  const router = createRouter();
   return <RouterProvider router={router} />;
 };
 
 const App = () => (
-  <ModalProvider>
-    <TaskProvider>
-      <AppWithContextRouter />
-    </TaskProvider>
-  </ModalProvider>
+  <SearchProvider>
+    <ModalProvider>
+      <TaskProvider>
+        <AppWithContextRouter />
+      </TaskProvider>
+    </ModalProvider>
+  </SearchProvider>
 );
 
 export default App;

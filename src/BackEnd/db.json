@@ -3,7 +3,7 @@
     {
       "id": "1",
       "name": "graphics",
-      "status": "Pending",
+      "status": "Completed",
       "date": "2025-04-26"
     },
     {
@@ -18,7 +18,7 @@
       "id": "1744618356929",
       "name": "ReactApp Provider",
       "description": "",
-      "status": "Pending",
+      "status": "pending",
       "priority": "High",
       "date": "2025-04-14",
       "keywords": [],
@@ -29,7 +29,7 @@
       "id": "3",
       "name": "Fix bugs",
       "description": "",
-      "status": "Pending",
+      "status": "pending",
       "priority": "Low",
       "date": "2025-04-05",
       "keywords": [

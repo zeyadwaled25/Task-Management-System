@@ -11,10 +11,12 @@ import EditListContent from "./components/Navbar/EditListContent";
 
 import { TaskContext } from "./context/TaskContext";
 import { useModal } from "./context/ModalContext";
+import { useSearch } from "./context/SearchContext";
 
-const AppLayout = ({ searchQuery, setSearchQuery }) => {
+const AppLayout = () => {
   const { addTaskToList, lists } = useContext(TaskContext);
   const { modalState } = useModal();
+  const { searchQuery } = useSearch();
   const [selectedList, setSelectedList] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -52,9 +54,9 @@ const AppLayout = ({ searchQuery, setSearchQuery }) => {
     <div className="app d-flex">
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="d-flex flex-column flex-grow-1">
-        <Navbar setSearchQuery={setSearchQuery} />
+        <Navbar />
         <div className="flex-grow-1">
-          <Outlet />
+          <Outlet context={{ searchQuery }} />
         </div>
       </div>
       <GlobalModal>{renderModalContent()}</GlobalModal>

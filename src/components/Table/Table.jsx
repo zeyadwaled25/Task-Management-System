@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState, useContext } from "react";
 import { TaskContext } from "../../context/TaskContext";
+import { useSearch } from "../../context/SearchContext";
 import Filter from "./Filter";
 import "./Table.css";
 import { Grid3x3Gap, ListUl, CheckCircleFill } from "react-bootstrap-icons"; // أضفنا CheckCircleFill
 import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
-function Table({ searchQuery }) {
+function Table () {
   const { tasks, updateTask } = useContext(TaskContext);
-  const [selectedTasks, setSelectedTasks] = useState([]);
+  const { searchQuery } = useSearch();
   const [viewMode, setViewMode] = useState("table");
 
   const tableSize = 5;
@@ -32,9 +33,12 @@ function Table({ searchQuery }) {
           !filterOptions.priority || task.priority === filterOptions.priority;
         const matchesStatus =
           !filterOptions.status || task.status === filterOptions.status;
-        const matchesSearch = task.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch = query === "" || 
+          task.name.toLowerCase().includes(query) ||
+          task.category.toLowerCase().includes(query) ||
+          (task.description && task.description.toLowerCase().includes(query));
+
         return matchesPriority && matchesStatus && matchesSearch;
       })
       .sort((a, b) => {
@@ -47,6 +51,15 @@ function Table({ searchQuery }) {
         }
       });
   }, [tasks, filterOptions, searchQuery]);
+  // Reset to first page when search or filters change
+  useEffect(() => {
+    setPagination(prev => ({
+      ...prev,
+      currentPage: 1,
+      from: 0,
+      to: tableSize
+    }));
+  }, [searchQuery, filterOptions]);
 
   // تعديل الدالة عشان تعمل toggle بين "Completed" و "pending"
   const handleMarkAsCompleted = async (task) => {
@@ -85,6 +98,22 @@ function Table({ searchQuery }) {
     return () => mediaQuery.removeEventListener("change", handleMediaChange);
   }, []);
 
+  // Show message when no tasks match the search query
+  if (filteredTasks.length === 0 && searchQuery) {
+    return (
+      <div className="table-container py-3 pb-md-0 px-4">
+        <Filter
+          filterOptions={filterOptions}
+          setFilterOptions={setFilterOptions}
+        />
+        <div className="table-content border rounded p-5 text-center">
+          <h3 className="text-muted">No tasks found matching "{searchQuery}"</h3>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="table-container py-3 pb-md-0 px-4">
       <Filter
@@ -94,7 +123,10 @@ function Table({ searchQuery }) {
       <div className="table-content border rounded">
         <div className="p-3">
           <div className="d-flex justify-content-between align-items-center">
-            <h3 className="h5 text-dark mb-0">Recent Tasks</h3>
+            <h3 className="h5 text-dark mb-0 d-flex align-items-center">
+              {searchQuery ? `Search Results for "${searchQuery}"` : "Task Overview"}
+              {filteredTasks.length > 0 && <span className="ms-2 badge bg-secondary">{filteredTasks.length}</span>}
+            </h3>
             <div className="view d-flex gap-1">
               <button
                 className={`btn btn-light p-2 text-muted border-0 ${
@@ -122,7 +154,6 @@ function Table({ searchQuery }) {
                 <thead className="border-bottom border-top">
                   <tr className="table-light">
                     <th className="px-3 py-2"></th> {/* عمود الدايرة */}
-                    <th className="px-3 py-2"></th> {/* عمود الـ checkbox */}
                     <th className="text-secondary text-uppercase px-3 py-2">
                       Task
                     </th>
@@ -144,27 +175,116 @@ function Table({ searchQuery }) {
                 <tbody>
                   {filteredTasks
                     .slice(pagination.from, pagination.to)
-                    .map((task) => (
-                      <tr
-                        key={task.id}
-                        className={
-                          selectedTasks.includes(task.id) ? "table-active" : ""
-                        }
-                      >
-                        <td className="px-3 py-3">
-                          <div
-                            className={`completion-circle ${
-                              task.status === "Completed" ? "completed" : ""
-                            }`}
-                            onClick={() => handleMarkAsCompleted(task)}
-                          >
-                            {task.status === "Completed" && (
-                              <CheckCircleFill className="checkmark" />
-                            )}
+                    .map((task) => {
+                      // Highlight the search term in task name
+                      let taskName = task.name;
+                      if (searchQuery) {
+                        const regex = new RegExp(`(${searchQuery})`, 'gi');
+                        taskName = taskName.replace(regex, '<mark>$1</mark>');
+                      }
+                      
+                      return (
+                        <tr
+                          key={task.id}
+                        >
+                          <td className="px-3 py-3">
+                            <div
+                              className={`completion-circle ${
+                                task.status === "Completed" ? "completed" : ""
+                              }`}
+                              onClick={() => handleMarkAsCompleted(task)}
+                            >
+                              {task.status === "Completed" && (
+                                <CheckCircleFill className="checkmark" />
+                              )}
+                            </div>
+                          </td>
+                          <td 
+                            className="task-name px-3 py-3"
+                            dangerouslySetInnerHTML={{ __html: taskName }}
+                          />
+                          <td className="px-3 py-3 d-none d-sm-table-cell">
+                            <span
+                              className={`badge fw-normal ${
+                                task.priority === "High"
+                                  ? "bg-danger"
+                                  : task.priority === "Medium"
+                                  ? "bg-warning"
+                                  : "bg-info"
+                              }`}
+                              style={{ borderRadius: "15px" }}
+                            >
+                              {task.priority}
+                            </span>
+                          </td>
+                          <td className="task-date px-3 py-3 d-none d-md-table-cell">
+                            {task.date}
+                          </td>
+                          <td className="px-3 py-3">
+                            <span
+                              className={`badge fw-normal ${
+                                task.status === "Completed"
+                                  ? "bg-success"
+                                  : task.status === "In Progress"
+                                  ? "bg-warning"
+                                  : "bg-secondary"
+                              }`}
+                              style={{ borderRadius: "15px" }}
+                            >
+                              {task.status}
+                            </span>
+                          </td>
+                          <td className="task-category px-3 py-3 d-none d-lg-table-cell">
+                            {task.category}
+                          </td>
+                          <td className="text-center task-options px-3 py-3">
+                            <Options task={task} />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid-view p-3">
+              {filteredTasks
+                .slice(pagination.from, pagination.to)
+                .map((task) => {
+                  // Highlight the search term in task name
+                  let taskName = task.name;
+                  if (searchQuery) {
+                    const regex = new RegExp(`(${searchQuery})`, 'gi');
+                    taskName = taskName.replace(regex, '<mark>$1</mark>');
+                  }
+                  
+                  return (
+                    <div
+                      key={task.id}
+                      className={"card mb-3"}
+                    >
+                      <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="d-flex align-items-center">
+                            <div
+                              className={`completion-circle me-2 ${
+                                task.status === "Completed" ? "completed" : ""
+                              }`}
+                              onClick={() => handleMarkAsCompleted(task)}
+                            >
+                              {task.status === "Completed" && (
+                                <CheckCircleFill className="checkmark" />
+                              )}
+                            </div>
+                            <h5 
+                              className="task-name mb-0"
+                              dangerouslySetInnerHTML={{ __html: taskName }}
+                            />
                           </div>
-                        </td>
-                        <td className="task-name px-3 py-3">{task.name}</td>
-                        <td className="px-3 py-3 d-none d-sm-table-cell">
+                          <Options task={task} />
+                        </div>
+                        <p className="task-date mb-1">Due: {task.date}</p>
+                        <p className="mb-1">
                           <span
                             className={`badge fw-normal ${
                               task.priority === "High"
@@ -177,85 +297,15 @@ function Table({ searchQuery }) {
                           >
                             {task.priority}
                           </span>
-                        </td>
-                        <td className="task-date px-3 py-3 d-none d-md-table-cell">
-                          {task.date}
-                        </td>
-                        <td className="px-3 py-3">
-                          <span
-                            className={`badge fw-normal ${
-                              task.status === "Completed"
-                                ? "bg-success"
-                                : task.status === "In Progress"
-                                ? "bg-warning"
-                                : "bg-secondary"
-                            }`}
-                            style={{ borderRadius: "15px" }}
-                          >
-                            {task.status}
-                          </span>
-                        </td>
-                        <td className="task-category px-3 py-3 d-none d-lg-table-cell">
-                          {task.category}
-                        </td>
-                        <td className="text-center task-options px-3 py-3">
-                          <Options task={task} />
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="grid-view p-3">
-              {filteredTasks
-                .slice(pagination.from, pagination.to)
-                .map((task) => (
-                  <div
-                    key={task.id}
-                    className={`card mb-3 ${
-                      selectedTasks.includes(task.id) ? "table-active" : ""
-                    }`}
-                  >
-                    <div className="card-body">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="d-flex align-items-center">
-                          <div
-                            className={`completion-circle me-2 ${
-                              task.status === "Completed" ? "completed" : ""
-                            }`}
-                            onClick={() => handleMarkAsCompleted(task)}
-                          >
-                            {task.status === "Completed" && (
-                              <CheckCircleFill className="checkmark" />
-                            )}
-                          </div>
-                          <h5 className="task-name mb-0">{task.name}</h5>
-                        </div>
-                        <Options task={task} />
+                        </p>
+                        <p className="mb-1">Status: {task.status}</p>
+                        <p className="task-category mb-0">
+                          Category: {task.category}
+                        </p>
                       </div>
-                      <p className="task-date mb-1">Due: {task.date}</p>
-                      <p className="mb-1">
-                        <span
-                          className={`badge fw-normal ${
-                            task.priority === "High"
-                              ? "bg-danger"
-                              : task.priority === "Medium"
-                              ? "bg-warning"
-                              : "bg-info"
-                          }`}
-                          style={{ borderRadius: "15px" }}
-                        >
-                          {task.priority}
-                        </span>
-                      </p>
-                      <p className="mb-1">Status: {task.status}</p>
-                      <p className="task-category mb-0">
-                        Category: {task.category}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           )}
         </div>
