@@ -1,23 +1,45 @@
 // src/components/Navbar/navBar.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "../../context/ModalContext";
+import { useSearch } from "../../context/SearchContext";
 
-const Navbar = ({ setSearchQuery }) => {
+const Navbar = () => {
   const { openModal } = useModal();
+  const { setSearchQuery } = useSearch();
+  const [searchValue, setSearchValue] = useState("");
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchValue(value);
+    setSearchQuery(value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue("");
+    setSearchQuery("");
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light text-dark shadow-sm">
       <div className="container-fluid px-4">
-        <input
-          className="form-control rounded w-25 bg-white text-dark border-2"
-          type="text"
-          onChange={handleSearchChange}
-          placeholder="Search..."
-        />
+        <div className="position-relative w-25">
+          <input
+            className="form-control rounded bg-white text-dark border-2"
+            type="text"
+            value={searchValue}
+            onChange={handleSearchChange}
+            placeholder="Search tasks..."
+          />
+          {searchValue && (
+            <button 
+              className="position-absolute top-50 end-0 translate-middle-y bg-transparent border-0 pe-2"
+              onClick={handleClearSearch}
+              aria-label="Clear search"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          )}
+        </div>
         <button
           className="
           btn btn-primary w-auto ms-2"

@@ -113,6 +113,23 @@
   color: #fff !important;
 }
 
+mark {
+  background-color: #fff3cd;
+  padding: 0.1rem 0.2rem;
+  border-radius: 3px;
+}
+
+.table-content .no-results {
+  padding: 3rem;
+  text-align: center;
+}
+
+.search-count {
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  opacity: 0.8;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .table-container {

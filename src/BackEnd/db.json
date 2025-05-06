@@ -30,12 +30,8 @@
       "name": "Fix bugs",
       "description": "",
       "status": "Pending",
-      "priority": "Low",
       "date": "2025-04-05",
-      "keywords": [
-        "code",
-        "bugs"
-      ],
+      "keywords": ["code", "bugs"],
       "listId": "2",
       "category": "programming"
     },
@@ -46,9 +42,7 @@
       "status": "Pending",
       "priority": "High",
       "date": "2025-04-29",
-      "keywords": [
-        "Test Task"
-      ],
+      "keywords": ["Test Task"],
       "listId": "2",
       "category": "programming"
     }
