@@ -237,3 +237,6 @@ mark {
 .grid-view .card:hover {
   background-color: #f8f9fa;
 }
+svg {
+  cursor: pointer;
+}

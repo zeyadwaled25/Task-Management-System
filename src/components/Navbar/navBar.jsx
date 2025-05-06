@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useModal } from "../../context/ModalContext";
 import { useSearch } from "../../context/SearchContext";
-
+import { Plus } from "react-bootstrap-icons";
 const Navbar = () => {
   const { openModal } = useModal();
   const { setSearchQuery } = useSearch();
@@ -31,8 +31,8 @@ const Navbar = () => {
             placeholder="Search tasks..."
           />
           {searchValue && (
-            <button 
-              className="position-absolute top-50 end-0 translate-middle-y bg-transparent border-0 pe-2"
+            <button
+              className="position-absolute top-50 end-0 translate-middle-y bg-transparent border-0 pe-2 "
               onClick={handleClearSearch}
               aria-label="Clear search"
             >
@@ -42,14 +42,15 @@ const Navbar = () => {
         </div>
         <button
           className="
-          btn btn-primary w-auto ms-2"
+          btn btn-primary"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
           aria-label="Add Task"
           onClick={() => openModal("addTask")}
         >
-          Add Task
+          <Plus />
+          Add New Task
         </button>
       </div>
     </nav>
