@@ -71,7 +71,7 @@ function ListsBoard() {
 
                   // حساب التاسكات المكتملة
                   const completedCount = listTasks.filter(
-                    (t) => t.status && t.status.toLowerCase() === "Completed"
+                    (t) => t.status && t.status.toLowerCase() === "completed"
                   ).length;
 
                   const completionPercentage =

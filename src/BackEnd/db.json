@@ -30,6 +30,7 @@
       "name": "Fix bugs",
       "description": "",
       "status": "Pending",
+      "priority": "Low",
       "date": "2025-04-05",
       "keywords": ["code", "bugs"],
       "listId": "2",
