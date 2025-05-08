@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { TaskContext } from "../context/TaskContext";
 import { useModal } from "../context/ModalContext";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 const AddTaskContent = ({ onAddTask }) => {
   const { lists, addTaskToList } = useContext(TaskContext);
@@ -39,9 +39,9 @@ const AddTaskContent = ({ onAddTask }) => {
 
     // Clear errors when user types
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ""
+        [field]: "",
       }));
     }
   };
@@ -61,7 +61,7 @@ const AddTaskContent = ({ onAddTask }) => {
       newErrors.listId = "Please select a list";
       isValid = false;
     }
-    
+
     // Validate due date is required
     if (!newTask.date) {
       newErrors.date = "Due date is required";
@@ -74,32 +74,26 @@ const AddTaskContent = ({ onAddTask }) => {
 
   const handleSubmit = () => {
     if (!lists || lists.length === 0) {
-      toast.error(
-        "Lists are still loading, try again shortly!",
-        {
-          icon: '⏳',
-          style: {
-            borderRadius: '12px',
-            background: '#333',
-            color: '#fff',
-          },
-        }
-      );
+      toast.error("Lists are still loading, try again shortly!", {
+        icon: "⏳",
+        style: {
+          borderRadius: "12px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       return;
     }
-    
+
     if (!validateForm()) {
-      toast.error(
-        "Please fix the errors before submitting",
-        {
-          icon: '⚠️',
-          style: {
-            borderRadius: '12px',
-            background: '#333',
-            color: '#fff',
-          },
-        }
-      );
+      toast.error("Please fix the errors before submitting", {
+        icon: "⚠️",
+        style: {
+          borderRadius: "12px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       return;
     }
 
@@ -118,7 +112,7 @@ const AddTaskContent = ({ onAddTask }) => {
     addTaskToList(newTask.listId, task);
     onAddTask({ ...task, listId: newTask.listId });
     closeModal();
-    
+
     toast.success("Task added successfully!", {
       icon: "🎉",
       style: {
@@ -147,13 +141,17 @@ const AddTaskContent = ({ onAddTask }) => {
             </label>
             <input
               type="text"
-              className={`form-control bg-white text-dark border-2 ${errors.name ? 'is-invalid' : ''}`}
+              className={`form-control bg-white text-dark border-2 ${
+                errors.name ? "is-invalid" : ""
+              }`}
               id="taskName"
               placeholder="Task Name"
               value={newTask.name}
               onChange={handleInputChange}
             />
-            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
           </div>
           <div className="mb-1 col-md-12">
             <label htmlFor="taskDescription" className="form-label fw-medium">
@@ -174,13 +172,17 @@ const AddTaskContent = ({ onAddTask }) => {
             </label>
             <input
               type="date"
-              className={`form-control bg-white text-dark border-2 ${errors.date ? 'is-invalid' : ''}`}
+              className={`form-control bg-white text-dark border-2 ${
+                errors.date ? "is-invalid" : ""
+              }`}
               id="taskDate"
               value={newTask.date}
               onChange={handleInputChange}
-              min={new Date().toISOString().split('T')[0]} // Set minimum date to today
+              min={new Date().toISOString().split("T")[0]} // Set minimum date to today
             />
-            {errors.date && <div className="invalid-feedback">{errors.date}</div>}
+            {errors.date && (
+              <div className="invalid-feedback">{errors.date}</div>
+            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskPriority" className="form-label fw-medium">
@@ -202,7 +204,9 @@ const AddTaskContent = ({ onAddTask }) => {
               List Name <span className="text-danger">*</span>
             </label>
             <select
-              className={`form-select bg-white text-dark border-2 ${errors.listId ? 'is-invalid' : ''}`}
+              className={`form-select bg-white text-dark border-2 ${
+                errors.listId ? "is-invalid" : ""
+              }`}
               id="listId"
               value={newTask.listId}
               onChange={handleInputChange}
@@ -217,7 +221,9 @@ const AddTaskContent = ({ onAddTask }) => {
                   ))
                 : null}
             </select>
-            {errors.listId && <div className="invalid-feedback">{errors.listId}</div>}
+            {errors.listId && (
+              <div className="invalid-feedback">{errors.listId}</div>
+            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskKeywords" className="form-label fw-medium">
@@ -265,10 +271,7 @@ const AddTaskContent = ({ onAddTask }) => {
           Add
         </button>
       </div>
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-      />
+      <Toaster position="top-right" reverseOrder={false} />
     </>
   );
 };
