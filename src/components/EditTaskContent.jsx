@@ -89,7 +89,7 @@ const EditTaskContent = ({ task }) => {
       toast.error(
         "Please fix the errors before submitting",
         {
-          icon: '⚠️',
+          icon: '⚠',
           style: {
             borderRadius: '12px',
             background: '#333',
