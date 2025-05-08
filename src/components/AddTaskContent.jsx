@@ -10,19 +10,16 @@ const AddTaskContent = () => {
   const [newTask, setNewTask] = useState({
     name: "",
     description: "",
-    status: "Pending", // Default matches schema
-    priority: "Low", // Default matches schema
+    status: "Pending",
+    priority: "Low",
     date: "",
     keywords: "",
     listId: "",
-    category: "", // Required field per schema
   });
 
   const [errors, setErrors] = useState({
     name: "",
     listId: "",
-    date: "",
-    category: "",
   });
 
   const handleInputChange = (e) => {
@@ -59,17 +56,10 @@ const AddTaskContent = () => {
       newErrors.listId = "Please select a list";
       isValid = false;
     }
-
-    if (!newTask.category.trim()) {
-      newErrors.category = "Category is required";
+    if (!newTask.date) {
+      newErrors.listId = "Please select a date";
       isValid = false;
     }
-
-    // Date is not required per schema, so remove validation
-    // if (!newTask.date) {
-    //   newErrors.date = "Due date is required";
-    //   isValid = false;
-    // }
 
     setErrors(newErrors);
     return isValid;
@@ -100,13 +90,13 @@ const AddTaskContent = () => {
       return;
     }
 
+    const selectedList = lists.find((list) => list._id === newTask.listId);
     const task = {
       name: newTask.name.trim(),
       description: newTask.description.trim(),
       status: newTask.status,
       priority: newTask.priority,
-      date: newTask.date || undefined, // Optional field
-      category: newTask.category.trim(),
+      date: newTask.date || undefined,
       keywords: newTask.keywords
         ? newTask.keywords
             .split(",")
@@ -114,6 +104,7 @@ const AddTaskContent = () => {
             .filter((k) => k)
         : [],
       listId: newTask.listId,
+      category: selectedList ? selectedList.name : "", // Set category to list name
     };
 
     addTaskToList(newTask.listId, task);
@@ -165,8 +156,7 @@ const AddTaskContent = () => {
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskDate" className="form-label fw-medium">
-              Due Date
-            </label>
+              Due Date <span className="text-danger">*</span>
             <input
               type="date"
               className={`form-control bg-white text-dark border-2 ${
@@ -177,9 +167,6 @@ const AddTaskContent = () => {
               onChange={handleInputChange}
               min={new Date().toISOString().split("T")[0]}
             />
-            {errors.date && (
-              <div className="invalid-feedback">{errors.date}</div>
-            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskPriority" className="form-label fw-medium">
@@ -234,24 +221,6 @@ const AddTaskContent = () => {
               value={newTask.keywords}
               onChange={handleInputChange}
             />
-          </div>
-          <div className="mb-1 col-md-6">
-            <label htmlFor="taskCategory" className="form-label fw-medium">
-              Category <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className={`form-control bg-white text-dark border-2 ${
-                errors.category ? "is-invalid" : ""
-              }`}
-              id="taskCategory"
-              placeholder="e.g., programming, personal, work"
-              value={newTask.category}
-              onChange={handleInputChange}
-            />
-            {errors.category && (
-              <div className="invalid-feedback">{errors.category}</div>
-            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskStatus" className="form-label fw-medium">

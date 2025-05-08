@@ -8,7 +8,7 @@ const EditTaskContent = ({ task }) => {
   const { closeModal } = useModal();
 
   const [updatedTask, setUpdatedTask] = useState({
-    _id: task._id,
+    _id: task._id || task.id,
     name: task.name || "",
     description: task.description || "",
     status: task.status || "Pending",
@@ -21,7 +21,6 @@ const EditTaskContent = ({ task }) => {
   const [errors, setErrors] = useState({
     name: "",
     listId: "",
-    date: "",
   });
 
   const handleInputChange = (e) => {
@@ -37,11 +36,10 @@ const EditTaskContent = ({ task }) => {
       [field]: value,
     }));
 
-    // Clear errors when user types
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ""
+        [field]: "",
       }));
     }
   };
@@ -50,21 +48,13 @@ const EditTaskContent = ({ task }) => {
     const newErrors = {};
     let isValid = true;
 
-    // Validate task name
     if (!updatedTask.name.trim()) {
       newErrors.name = "Task name is required";
       isValid = false;
     }
 
-    // Validate list selection
     if (!updatedTask.listId) {
       newErrors.listId = "Please select a list";
-      isValid = false;
-    }
-    
-    // Validate due date is required and not in the past
-    if (!updatedTask.date) {
-      newErrors.date = "Due date is required";
       isValid = false;
     }
 
@@ -86,31 +76,33 @@ const EditTaskContent = ({ task }) => {
     }
 
     if (!validateForm()) {
-      toast.error(
-        "Please fix the errors before submitting",
-        {
-          icon: '⚠',
-          style: {
-            borderRadius: '12px',
-            background: '#333',
-            color: '#fff',
-          },
-        }
-      );
+      toast.error("Please fix the errors before submitting", {
+        icon: "⚠",
+        style: {
+          borderRadius: "12px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       return;
     }
 
+    const selectedList = lists.find((list) => list._id === updatedTask.listId);
     const taskToUpdate = {
       _id: updatedTask._id,
       name: updatedTask.name.trim(),
       description: updatedTask.description.trim(),
-      status: updatedTask.status || "Pending",
+      status: updatedTask.status,
       priority: updatedTask.priority,
-      date: updatedTask.date,
+      date: updatedTask.date || undefined,
       keywords: updatedTask.keywords
-        ? updatedTask.keywords.split(",").map((k) => k.trim())
+        ? updatedTask.keywords
+            .split(",")
+            .map((k) => k.trim())
+            .filter((k) => k)
         : [],
       listId: updatedTask.listId,
+      category: selectedList ? selectedList.name : "", // Set category to list name
     };
 
     updateTask(taskToUpdate);
@@ -135,13 +127,17 @@ const EditTaskContent = ({ task }) => {
             </label>
             <input
               type="text"
-              className={`form-control bg-white text-dark border-2 ${errors.name ? 'is-invalid' : ''}`}
+              className={`form-control bg-white text-dark border-2 ${
+                errors.name ? "is-invalid" : ""
+              }`}
               id="taskName"
               placeholder="Task Name"
               value={updatedTask.name}
               onChange={handleInputChange}
             />
-            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
           </div>
           <div className="mb-1 col-md-12">
             <label htmlFor="taskDescription" className="form-label fw-medium">
@@ -158,18 +154,16 @@ const EditTaskContent = ({ task }) => {
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskDate" className="form-label fw-medium">
-              Due Date <span className="text-danger">*</span>
+              Due Date
             </label>
             <input
               type="date"
-              className={`form-control bg-white text-dark border-2 ${errors.date ? 'is-invalid' : ''}`}
+              className="form-control bg-white text-dark border-2"
               id="taskDate"
               value={updatedTask.date}
               onChange={handleInputChange}
-              min={new Date().toISOString().split('T')[0]} // Set minimum date to today
-              required
+              min={new Date().toISOString().split("T")[0]}
             />
-            {errors.date && <div className="invalid-feedback">{errors.date}</div>}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskPriority" className="form-label fw-medium">
@@ -181,9 +175,9 @@ const EditTaskContent = ({ task }) => {
               value={updatedTask.priority}
               onChange={handleInputChange}
             >
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
               <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
             </select>
           </div>
           <div className="mb-1 col-md-6">
@@ -191,7 +185,9 @@ const EditTaskContent = ({ task }) => {
               List Name <span className="text-danger">*</span>
             </label>
             <select
-              className={`form-select bg-white text-dark border-2 ${errors.listId ? 'is-invalid' : ''}`}
+              className={`form-select bg-white text-dark border-2 ${
+                errors.listId ? "is-invalid" : ""
+              }`}
               id="listId"
               value={updatedTask.listId}
               onChange={handleInputChange}
@@ -206,7 +202,9 @@ const EditTaskContent = ({ task }) => {
                   ))
                 : null}
             </select>
-            {errors.listId && <div className="invalid-feedback">{errors.listId}</div>}
+            {errors.listId && (
+              <div className="invalid-feedback">{errors.listId}</div>
+            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskKeywords" className="form-label fw-medium">
@@ -221,7 +219,7 @@ const EditTaskContent = ({ task }) => {
               onChange={handleInputChange}
             />
           </div>
-          <div className="mb-1">
+          <div className="mb-1 col-md-6">
             <label htmlFor="taskStatus" className="form-label fw-medium">
               Status
             </label>
@@ -254,10 +252,7 @@ const EditTaskContent = ({ task }) => {
           Update
         </button>
       </div>
-      <Toaster
-        position="top-right"
-        reverseOrder={false}
-      />
+      <Toaster position="top-right" reverseOrder={false} />
     </>
   );
 };
