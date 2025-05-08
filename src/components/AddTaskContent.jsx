@@ -3,12 +3,12 @@ import { TaskContext } from "../context/TaskContext";
 import { useModal } from "../context/ModalContext";
 import toast, { Toaster } from 'react-hot-toast';
 
-const AddTaskContent = ({ onAddTask }) => {
+const AddTaskContent = () => {
   const { lists, addTaskToList } = useContext(TaskContext);
   const { closeModal } = useModal();
 
   const [newTask, setNewTask] = useState({
-    id: "",
+    _id: "",
     name: "",
     description: "",
     status: "Pending",
@@ -16,12 +16,14 @@ const AddTaskContent = ({ onAddTask }) => {
     date: "",
     keywords: "",
     listId: "",
+    category: "general", // Added default category
   });
 
   const [errors, setErrors] = useState({
     name: "",
     listId: "",
     date: "",
+    category: "",
   });
 
   const handleInputChange = (e) => {
@@ -67,6 +69,12 @@ const AddTaskContent = ({ onAddTask }) => {
       newErrors.date = "Due date is required";
       isValid = false;
     }
+    
+    // Validate category is required
+    if (!newTask.category) {
+      newErrors.category = "Category is required";
+      isValid = false;
+    }
 
     setErrors(newErrors);
     return isValid;
@@ -103,30 +111,21 @@ const AddTaskContent = ({ onAddTask }) => {
       return;
     }
 
+    // We don't set _id here since the server will generate it
     const task = {
-      id: Date.now(),
       name: newTask.name.trim(),
       description: newTask.description.trim(),
       status: newTask.status || "Pending",
       priority: newTask.priority,
       date: newTask.date,
+      category: newTask.category, // Added category
       keywords: newTask.keywords
         ? newTask.keywords.split(",").map((k) => k.trim())
         : [],
     };
 
     addTaskToList(newTask.listId, task);
-    onAddTask({ ...task, listId: newTask.listId });
     closeModal();
-    
-    toast.success("Task added successfully!", {
-      icon: "🎉",
-      style: {
-        borderRadius: "10px",
-        background: "#333",
-        color: "#fff",
-      },
-    });
   };
 
   return (
@@ -170,7 +169,7 @@ const AddTaskContent = ({ onAddTask }) => {
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskDate" className="form-label fw-medium">
-              Due Date
+              Due Date <span className="text-danger">*</span>
             </label>
             <input
               type="date"
@@ -211,7 +210,7 @@ const AddTaskContent = ({ onAddTask }) => {
               <option value="">Select a list</option>
               {lists && lists.length > 0
                 ? lists.map((list) => (
-                    <option key={list.id} value={list.id}>
+                    <option key={list._id} value={list._id}>
                       {list.name}
                     </option>
                   ))
@@ -232,7 +231,22 @@ const AddTaskContent = ({ onAddTask }) => {
               onChange={handleInputChange}
             />
           </div>
-          <div className="mb-1">
+          {/* Added Category Field */}
+          <div className="mb-1 col-md-6">
+            <label htmlFor="taskCategory" className="form-label fw-medium">
+              Category <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className={`form-control bg-white text-dark border-2 ${errors.category ? 'is-invalid' : ''}`}
+              id="taskCategory"
+              placeholder="e.g., programming, personal, work"
+              value={newTask.category}
+              onChange={handleInputChange}
+            />
+            {errors.category && <div className="invalid-feedback">{errors.category}</div>}
+          </div>
+          <div className="mb-1 col-md-6">
             <label htmlFor="taskStatus" className="form-label fw-medium">
               Status
             </label>

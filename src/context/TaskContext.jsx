@@ -80,7 +80,7 @@ const updateListStatus = async (
 
   if (newStatus !== targetList.status) {
     const updatedList = { ...targetList, status: newStatus };
-    await axios.put(`${listsUrl}/${targetList.id}`, updatedList);
+    await axios.put(`${listsUrl}/${targetList._id}`, updatedList);
     const response = await axios.get(listsUrl); // Fetch جديد للتأكد
     setLists(response.data);
     console.log(`List updated to ${newStatus}:`, updatedList);
@@ -103,8 +103,8 @@ const updateTasksWithPromise = async (tasksToUpdate, newStatus, updateTask) => {
 const TaskProvider = ({ children }) => {
   const [lists, setLists] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const listsUrl = "http://localhost:3000/lists";
-  const tasksUrl = "http://localhost:3000/tasks";
+  const listsUrl = "http://localhost:3000/routes/lists";
+  const tasksUrl = "http://localhost:3000/routes/tasks";
 
   useEffect(() => {
     axios
@@ -129,7 +129,7 @@ const TaskProvider = ({ children }) => {
           2000
         );
 
-      const targetList = lists.find((list) => list.id == listId);
+      const targetList = lists.find((list) => list._id == listId);
       if (!targetList) return handleErrorToast("Target list not found.", 2000);
 
       const taskWithCategory = {
@@ -142,8 +142,8 @@ const TaskProvider = ({ children }) => {
       setTasks([...tasks, response.data]);
 
       handleSuccessToast("Task added successfully!", () => {
-        axios.delete(`${tasksUrl}/${response.data.id}`);
-        setTasks(tasks.filter((task) => task.id !== response.data.id));
+        axios.delete(`${tasksUrl}/${response.data._id}`);
+        setTasks(tasks.filter((task) => task._id !== response.data._id));
       });
     } catch {
       handleErrorToast("Failed to add task, Please try again.", 2000);
@@ -152,18 +152,18 @@ const TaskProvider = ({ children }) => {
 
   const updateTask = async (updatedTask) => {
     try {
-      const originalTask = tasks.find((task) => task.id == updatedTask.id);
-      const targetList = lists.find((list) => list.id == updatedTask.listId);
+      const originalTask = tasks.find((task) => task._id == updatedTask._id);
+      const targetList = lists.find((list) => list._id == updatedTask.listId);
       if (!targetList) throw new Error("Target list not found");
 
       const taskWithCategory = {
         ...updatedTask,
         category: updatedTask.category || targetList.name,
       };
-      await axios.put(`${tasksUrl}/${updatedTask.id}`, taskWithCategory);
+      await axios.put(`${tasksUrl}/${updatedTask._id}`, taskWithCategory);
 
       const newTasks = tasks.map((task) =>
-        task.id === updatedTask.id ? taskWithCategory : task
+        task._id === updatedTask._id ? taskWithCategory : task
       );
       setTasks(newTasks);
 
@@ -179,9 +179,9 @@ const TaskProvider = ({ children }) => {
       );
 
       handleSuccessToast("Task updated successfully!", async () => {
-        await axios.put(`${tasksUrl}/${originalTask.id}`, originalTask);
+        await axios.put(`${tasksUrl}/${originalTask._id}`, originalTask);
         const revertedTasks = tasks.map((task) =>
-          task.id === updatedTask.id ? originalTask : task
+          task._id === updatedTask._id ? originalTask : task
         );
         setTasks(revertedTasks);
 
@@ -189,7 +189,7 @@ const TaskProvider = ({ children }) => {
           (task) => task.listId == originalTask.listId
         );
         const originalList = lists.find(
-          (list) => list.id == originalTask.listId
+          (list) => list._id == originalTask.listId
         );
         await updateListStatus(
           revertedListTasks,
@@ -206,9 +206,10 @@ const TaskProvider = ({ children }) => {
 
   const deleteTask = async (taskId) => {
     try {
-      const taskToDelete = tasks.find((task) => task.id == taskId);
+      const taskToDelete = tasks.find((task) => task._id == taskId);
+      console.log(taskId);
       await axios.delete(`${tasksUrl}/${taskId}`);
-      setTasks(tasks.filter((task) => task.id !== taskId));
+      setTasks(tasks.filter((task) => task._id !== taskId));
 
       handleSuccessToast("Task deleted successfully!", () => {
         axios.post(tasksUrl, taskToDelete);
@@ -225,8 +226,8 @@ const TaskProvider = ({ children }) => {
       setLists([...lists, response.data]);
 
       handleSuccessToast("List added successfully!", () => {
-        axios.delete(`${listsUrl}/${response.data.id}`);
-        setLists(lists.filter((list) => list.id !== response.data.id));
+        axios.delete(`${listsUrl}/${response.data._id}`);
+        setLists(lists.filter((list) => list._id !== response.data._id));
       });
     } catch {
       handleErrorToast("Failed to add list.", 2000);
@@ -235,15 +236,15 @@ const TaskProvider = ({ children }) => {
 
   const updateList = async (updatedList) => {
     try {
-      const originalList = lists.find((list) => list.id == updatedList.id);
+      const originalList = lists.find((list) => list._id == updatedList._id);
       const originalTasks = [...tasks];
       setLists(
-        lists.map((list) => (list.id === updatedList.id ? updatedList : list))
+        lists.map((list) => (list._id === updatedList._id ? updatedList : list))
       );
-      await axios.put(`${listsUrl}/${updatedList.id}`, updatedList);
+      await axios.put(`${listsUrl}/${updatedList._id}`, updatedList);
 
       const tasksToUpdate = tasks.filter(
-        (task) => task.listId == updatedList.id
+        (task) => task.listId == updatedList._id
       );
       await updateTasksWithPromise(
         tasksToUpdate,
@@ -252,15 +253,15 @@ const TaskProvider = ({ children }) => {
       );
 
       handleSuccessToast("List updated successfully!", async () => {
-        await axios.put(`${listsUrl}/${originalList.id}`, originalList);
+        await axios.put(`${listsUrl}/${originalList._id}`, originalList);
         setLists(
           lists.map((list) =>
-            list.id === updatedList.id ? originalList : list
+            list._id === updatedList._id ? originalList : list
           )
         );
 
         const tasksToRevert = tasks.filter(
-          (task) => task.listId == originalList.id
+          (task) => task.listId == originalList._id
         );
         await updateTasksWithPromise(
           tasksToRevert,
@@ -275,11 +276,11 @@ const TaskProvider = ({ children }) => {
 
   const deleteList = async (listId) => {
     try {
-      const listToDelete = lists.find((list) => list.id == listId);
+      const listToDelete = lists.find((list) => list._id == listId);
       const tasksToDelete = tasks.filter((task) => task.listId == listId);
-      for (const task of tasksToDelete) await deleteTask(task.id);
+      for (const task of tasksToDelete) await deleteTask(task._id);
       await axios.delete(`${listsUrl}/${listId}`);
-      setLists(lists.filter((list) => list.id !== listId));
+      setLists(lists.filter((list) => list._id !== listId));
 
       handleSuccessToast("List deleted successfully!", () => {
         axios.post(listsUrl, listToDelete);

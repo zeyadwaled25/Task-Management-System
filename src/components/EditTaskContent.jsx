@@ -8,7 +8,7 @@ const EditTaskContent = ({ task }) => {
   const { closeModal } = useModal();
 
   const [updatedTask, setUpdatedTask] = useState({
-    id: task.id,
+    _id: task._id,
     name: task.name || "",
     description: task.description || "",
     status: task.status || "Pending",
@@ -101,7 +101,7 @@ const EditTaskContent = ({ task }) => {
     }
 
     const taskToUpdate = {
-      id: updatedTask.id,
+      _id: updatedTask._id,
       name: updatedTask.name.trim(),
       description: updatedTask.description.trim(),
       status: updatedTask.status || "Pending",
@@ -115,15 +115,6 @@ const EditTaskContent = ({ task }) => {
 
     updateTask(taskToUpdate);
     closeModal();
-    
-    toast.success("Task updated successfully!", {
-      icon: "🎉",
-      style: {
-        borderRadius: "10px",
-        background: "#333",
-        color: "#fff",
-      },
-    });
   };
 
   return (
@@ -209,7 +200,7 @@ const EditTaskContent = ({ task }) => {
               <option value="">Select a list</option>
               {lists && lists.length > 0
                 ? lists.map((list) => (
-                    <option key={list.id} value={list.id}>
+                    <option key={list._id} value={list._id}>
                       {list.name}
                     </option>
                   ))

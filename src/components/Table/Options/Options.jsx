@@ -28,7 +28,7 @@ function Options({ task }) {
   };
 
   const handleDelete = () => {
-    deleteTask(task.id);
+    deleteTask(task._id);
     setOpen(false);
   };
 
