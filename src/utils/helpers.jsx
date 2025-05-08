@@ -23,8 +23,16 @@ export const updateListStatus = async (
   }
 
   if (newStatus !== targetList.status) {
-    const updatedList = { ...targetList, status: newStatus };
-    await axios.put(`${listsUrl}/${targetList.id}`, updatedList);
+    const updatedList = {
+      name: targetList.name,
+      status: newStatus,
+      date: targetList.date ? new Date(targetList.date) : undefined,
+      tasks: targetList.tasks || [],
+    };
+    await axios.put(
+      `${listsUrl}/${targetList._id || targetList.id}`,
+      updatedList
+    );
     const response = await axios.get(listsUrl);
     setLists(response.data);
   }
@@ -37,7 +45,17 @@ export const updateTasksWithPromise = async (
 ) => {
   const updatePromises = tasksToUpdate.map(async (task) => {
     if (task.status !== newStatus) {
-      const updatedTask = { ...task, status: newStatus };
+      const updatedTask = {
+        _id: task._id || task.id,
+        name: task.name,
+        description: task.description || "",
+        status: newStatus,
+        priority: task.priority || "Low",
+        date: task.date || undefined,
+        category: task.category,
+        keywords: task.keywords || [],
+        listId: task.listId,
+      };
       await updateTask(updatedTask);
       return updatedTask;
     }

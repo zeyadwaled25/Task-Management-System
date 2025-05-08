@@ -2,10 +2,11 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { PencilSquare, Trash, Eye, Plus } from "react-bootstrap-icons";
 import "./ListsBoard.css";
-import { TaskContext } from "../../context/TaskContext"; // استبدلنا useContext بـ useTaskContext
+import { TaskContext } from "../../context/TaskContext";
+import { toast } from "react-hot-toast"; // Assuming you have react-hot-toast installed
 
 function ListsBoard() {
-  const { lists, tasks, deleteList } = useContext(TaskContext); // جبنا lists و tasks من TaskContext
+  const { lists, tasks, deleteList } = useContext(TaskContext);
   const navigate = useNavigate();
   const statuses = ["Pending", "In Progress", "Completed"];
 
@@ -23,9 +24,39 @@ function ListsBoard() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this list?")) {
-      await deleteList(id); // استخدمنا onDeleteList اللي جاية من router.jsx
-    }
+    // Custom confirmation modal using toast
+    toast(
+      (t) => (
+        <div className="d-flex flex-column align-items-center">
+          <p className="mb-3">Are you sure you want to delete this list?</p>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => {
+                deleteList(id).then(() => toast.dismiss(t.id));
+              }}
+            >
+              Yes
+            </button>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: Infinity,
+        style: {
+          borderRadius: "10px",
+          background: "#fff",
+          color: "#333",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        },
+      }
+    );
   };
 
   const handleView = (id) => {
@@ -64,12 +95,10 @@ function ListsBoard() {
 
               <div className="d-flex flex-column gap-3">
                 {listsForStatus.map((list) => {
-                  // جبنا الـ tasks الخاصة بالـ list بناءً على listId
                   const listTasks = tasks.filter(
-                    (task) => task.listId === list.id
+                    (task) => task.listId === list._id
                   );
 
-                  // حساب التاسكات المكتملة
                   const completedCount = listTasks.filter(
                     (t) => t.status && t.status.toLowerCase() === "completed"
                   ).length;
@@ -81,7 +110,7 @@ function ListsBoard() {
 
                   return (
                     <div
-                      key={list.id}
+                      key={list._id}
                       className={`list-card card border-0 shadow-sm p-3 mb-2 ${
                         status === "Pending"
                           ? "bg-light border-start border-primary border-5"
@@ -97,21 +126,21 @@ function ListsBoard() {
                           <button
                             className="btn btn-sm btn-outline-primary"
                             title="View List"
-                            onClick={() => handleView(list.id)}
+                            onClick={() => handleView(list._id)}
                           >
                             <Eye />
                           </button>
                           <button
                             className="btn btn-sm btn-outline-warning"
                             title="Edit List"
-                            onClick={() => handleEdit(list.id)}
+                            onClick={() => handleEdit(list._id)}
                           >
                             <PencilSquare />
                           </button>
                           <button
                             className="btn btn-sm btn-outline-danger"
                             title="Delete List"
-                            onClick={() => handleDelete(list.id)}
+                            onClick={() => handleDelete(list._id)}
                           >
                             <Trash />
                           </button>

@@ -8,7 +8,7 @@ function ListTasksPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const list = lists.find((l) => l.id === id);
+  const list = lists.find((list) => list.id === id || list._id === id);
   const listTasks = tasks.filter((task) => task.listId === id); // جبنا الـ tasks بناءً على listId
 
   const getStatusColor = (status) => {

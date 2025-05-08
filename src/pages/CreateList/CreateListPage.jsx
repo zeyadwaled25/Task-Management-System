@@ -1,4 +1,3 @@
-// src/pages/CreateList/CreateListPage.jsx
 import React, { useContext, useState } from "react";
 import { TaskContext } from "../../context/TaskContext";
 import { useNavigate } from "react-router-dom";
@@ -6,18 +5,17 @@ import { useNavigate } from "react-router-dom";
 function CreateListPage() {
   const { addList } = useContext(TaskContext);
   const [name, setName] = useState("");
-  const [status, setStatus] = useState("Pending");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // التاريخ الافتراضي هو اليوم
+  const [status, setStatus] = useState("Pending"); // Default matches schema
+  const [date, setDate] = useState(""); // Date is optional
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newList = {
-      id: Date.now().toString(),
       name,
       status,
-      date,
-      tasks: [],
+      date: date ? new Date(date) : undefined, // Convert to Date object if provided
+      tasks: [], // Empty array per schema
     };
     addList(newList);
     setName("");
@@ -40,7 +38,9 @@ function CreateListPage() {
         style={{ maxWidth: "600px", margin: "auto" }}
       >
         <div className="mb-3">
-          <label className="form-label">List Name</label>
+          <label className="form-label">
+            List Name <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control rounded-3"
@@ -58,9 +58,9 @@ function CreateListPage() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option>To Do</option>
-            <option>Doing</option>
-            <option>Done</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
           </select>
         </div>
 
@@ -86,4 +86,5 @@ function CreateListPage() {
     </div>
   );
 }
+
 export default CreateListPage;

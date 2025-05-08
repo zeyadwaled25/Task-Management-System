@@ -12,16 +12,17 @@ function EditListPage() {
 
   useEffect(() => {
     if (lists && lists.length > 0) {
-      const list = lists.find((list) => list.id === id);
+      const list = lists.find((list) => list.id === id || list._id === id);
       if (list) {
         setName(list.name);
         setStatus(list.status);
-        setDate(list.date || new Date().toISOString().split("T")[0]);
+        setDate(
+          list.date ? new Date(list.date).toISOString().split("T")[0] : ""
+        );
       }
     }
   }, [lists, id]);
 
-  // حالة الـ Loading
   if (loading) {
     return (
       <div className="container py-5 text-center">
@@ -31,7 +32,6 @@ function EditListPage() {
     );
   }
 
-  // حالة الـ Error
   if (error) {
     return (
       <div className="container py-5 text-center">
@@ -46,7 +46,6 @@ function EditListPage() {
     );
   }
 
-  // لو الـ lists جات فاضية
   if (lists.length === 0) {
     return (
       <div className="container py-5 text-center">
@@ -61,7 +60,7 @@ function EditListPage() {
     );
   }
 
-  const list = lists.find((l) => l.id === id);
+  const list = lists.find((l) => l.id === id || l._id === id);
   if (!list) {
     return (
       <div className="container py-5 text-center">
@@ -82,7 +81,7 @@ function EditListPage() {
       ...list,
       name,
       status,
-      date: date || new Date().toISOString().split("T")[0],
+      date: date ? new Date(date) : undefined,
     };
 
     await updateList(updatedList);
@@ -104,7 +103,9 @@ function EditListPage() {
 
       <form onSubmit={handleSubmit} className="card p-4 shadow-sm border-0">
         <div className="mb-3">
-          <label className="form-label">List Name</label>
+          <label className="form-label">
+            List Name <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -122,9 +123,9 @@ function EditListPage() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option>Pending</option>
-            <option>In Progress</option>
-            <option>Completed</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
           </select>
         </div>
 
