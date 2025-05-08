@@ -5,7 +5,7 @@ import "./ListsBoard.css";
 import { TaskContext } from "../../context/TaskContext"; // استبدلنا useContext بـ useTaskContext
 
 function ListsBoard() {
-  const { lists, tasks,deleteList } = useContext(TaskContext); // جبنا lists و tasks من TaskContext
+  const { lists, tasks, deleteList } = useContext(TaskContext); // جبنا lists و tasks من TaskContext
   const navigate = useNavigate();
   const statuses = ["Pending", "In Progress", "Completed"];
 

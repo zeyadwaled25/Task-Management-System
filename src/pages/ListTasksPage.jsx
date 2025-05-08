@@ -67,7 +67,7 @@ function ListTasksPage() {
           {listTasks.map((task, index) => (
             <li
               key={index}
-              className="list-group-item d-flex justify-content-between align-items-center"
+              className="list-group-item d-flex my-1 justify-content-between align-items-center"
               style={{
                 transition: "0.3s ease",
                 cursor: "pointer",
