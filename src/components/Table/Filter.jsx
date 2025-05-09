@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import { XCircle } from "react-bootstrap-icons";
 
 function Filter({ filterOptions, setFilterOptions }) {
   const [openMenus, setOpenMenus] = useState({
@@ -91,11 +92,11 @@ function Filter({ filterOptions, setFilterOptions }) {
                 <ul className="dropdown-menu show w-100">
                   {dropdownOptions[menu].map((option, index) => (
                     <li key={index}>
-                      <div className="dropdown-item d-flex justify-content-between align-items-center">
-                        <span
-                          onClick={() => selectOption(menu, option)}
-                          style={{ cursor: "pointer", flex: 1 }}
-                        >
+                      <div className="dropdown-item d-flex justify-content-between align-items-center"
+                        onClick={() => selectOption(menu, option)}
+                        style={{ cursor: "pointer", flex: 1 }}
+                      >
+                        <span>
                           {option}
                         </span>
                         {filterOptions[menu] === option && (
@@ -104,7 +105,7 @@ function Filter({ filterOptions, setFilterOptions }) {
                             onClick={(e) => clearOption(menu, e)}
                             style={{ cursor: "pointer", fontSize: "1.3rem" }}
                           >
-                            ×
+                            <XCircle size={16} />
                           </span>
                         )}
                       </div>
