@@ -57,7 +57,7 @@ const AddTaskContent = () => {
       isValid = false;
     }
     if (!newTask.date) {
-      newErrors.listId = "Please select a date";
+      newErrors.date = "Please select a date";
       isValid = false;
     }
 
@@ -157,6 +157,7 @@ const AddTaskContent = () => {
           <div className="mb-1 col-md-6">
             <label htmlFor="taskDate" className="form-label fw-medium">
               Due Date <span className="text-danger">*</span>
+            </label>
             <input
               type="date"
               className={`form-control bg-white text-dark border-2 ${
@@ -167,6 +168,9 @@ const AddTaskContent = () => {
               onChange={handleInputChange}
               min={new Date().toISOString().split("T")[0]}
             />
+            {errors.date && (
+              <div className="invalid-feedback">{errors.date}</div>
+            )}
           </div>
           <div className="mb-1 col-md-6">
             <label htmlFor="taskPriority" className="form-label fw-medium">
