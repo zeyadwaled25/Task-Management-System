@@ -54,10 +54,8 @@ const TaskProvider = ({ children }) => {
         keywords: newTask.keywords || [],
         listId: listId,
       };
-
       const response = await axios.post(`${baseUrl}/routes/tasks`, taskToAdd);
       setTasks([...tasks, response.data]);
-
       handleSuccessToast("Task added successfully!", () => {
         axios
           .delete(`${baseUrl}/routes/tasks/${response.data._id}`)
