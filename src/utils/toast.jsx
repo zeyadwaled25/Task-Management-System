@@ -6,7 +6,7 @@ const toastStyle = {
   color: "#fff",
 };
 
-export const handleSuccessToast = (message, onUndo, duration = 2000) => {
+export const handleSuccessToast = (message, onUndo, duration = 4000) => {
   toast.success(
     (t) => (
       <span style={{ display: "flex", alignItems: "center", color: "#fff" }}>

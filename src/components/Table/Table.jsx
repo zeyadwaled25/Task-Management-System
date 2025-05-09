@@ -7,7 +7,7 @@ import { Grid3x3Gap, ListUl, CheckCircleFill } from "react-bootstrap-icons"; // 
 import { Pagination } from "@mui/material";
 import Options from "./Options/Options";
 
-function Table () {
+function Table() {
   const { tasks, updateTask } = useContext(TaskContext);
   const { searchQuery } = useSearch();
   const [viewMode, setViewMode] = useState("table");
@@ -34,7 +34,8 @@ function Table () {
         const matchesStatus =
           !filterOptions.status || task.status === filterOptions.status;
         const query = searchQuery.toLowerCase().trim();
-        const matchesSearch = query === "" || 
+        const matchesSearch =
+          query === "" ||
           task.name.toLowerCase().includes(query) ||
           task.category.toLowerCase().includes(query) ||
           (task.description && task.description.toLowerCase().includes(query));
@@ -53,11 +54,11 @@ function Table () {
   }, [tasks, filterOptions, searchQuery]);
   // Reset to first page when search or filters change
   useEffect(() => {
-    setPagination(prev => ({
+    setPagination((prev) => ({
       ...prev,
       currentPage: 1,
       from: 0,
-      to: tableSize
+      to: tableSize,
     }));
   }, [searchQuery, filterOptions]);
 
@@ -107,7 +108,9 @@ function Table () {
           setFilterOptions={setFilterOptions}
         />
         <div className="table-content border rounded p-5 text-center">
-          <h3 className="text-muted">No tasks found matching "{searchQuery}"</h3>
+          <h3 className="text-muted">
+            No tasks found matching "{searchQuery}"
+          </h3>
           <p>Try adjusting your search or filters</p>
         </div>
       </div>
@@ -124,8 +127,14 @@ function Table () {
         <div className="p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="h5 text-dark mb-0 d-flex align-items-center">
-              {searchQuery ? `Search Results for "${searchQuery}"` : "Task Overview"}
-              {filteredTasks.length > 0 && <span className="ms-2 badge bg-secondary">{filteredTasks.length}</span>}
+              {searchQuery
+                ? `Search Results for "${searchQuery}"`
+                : "Task Overview"}
+              {filteredTasks.length > 0 && (
+                <span className="ms-2 badge bg-secondary">
+                  {filteredTasks.length}
+                </span>
+              )}
             </h3>
             <div className="view d-flex gap-1">
               <button
@@ -153,7 +162,7 @@ function Table () {
               <table className="table mb-0 table-borderless table-hover">
                 <thead className="border-bottom border-top">
                   <tr className="table-light">
-                    <th className="px-3 py-2"></th> {/* عمود الدايرة */}
+                    <th className="px-3 py-2"></th>
                     <th className="text-secondary text-uppercase px-3 py-2">
                       Task
                     </th>
@@ -179,14 +188,11 @@ function Table () {
                       // Highlight the search term in task name
                       let taskName = task.name;
                       if (searchQuery) {
-                        const regex = new RegExp(`(${searchQuery})`, 'gi');
-                        taskName = taskName.replace(regex, '<mark>$1</mark>');
+                        const regex = new RegExp(`(${searchQuery})`, "gi");
+                        taskName = taskName.replace(regex, "<mark>$1</mark>");
                       }
-                      
                       return (
-                        <tr
-                          key={task._id}
-                        >
+                        <tr key={task._id}>
                           <td className="px-3 py-3">
                             <div
                               className={`completion-circle ${
@@ -199,7 +205,7 @@ function Table () {
                               )}
                             </div>
                           </td>
-                          <td 
+                          <td
                             className="task-name px-3 py-3"
                             dangerouslySetInnerHTML={{ __html: taskName }}
                           />
@@ -254,15 +260,12 @@ function Table () {
                   // Highlight the search term in task name
                   let taskName = task.name;
                   if (searchQuery) {
-                    const regex = new RegExp(`(${searchQuery})`, 'gi');
-                    taskName = taskName.replace(regex, '<mark>$1</mark>');
+                    const regex = new RegExp(`(${searchQuery})`, "gi");
+                    taskName = taskName.replace(regex, "<mark>$1</mark>");
                   }
-                  
+
                   return (
-                    <div
-                      key={task.id}
-                      className={"card mb-3"}
-                    >
+                    <div key={task.id} className={"card mb-3"}>
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center">
                           <div className="d-flex align-items-center">
@@ -276,7 +279,7 @@ function Table () {
                                 <CheckCircleFill className="checkmark" />
                               )}
                             </div>
-                            <h5 
+                            <h5
                               className="task-name mb-0"
                               dangerouslySetInnerHTML={{ __html: taskName }}
                             />
