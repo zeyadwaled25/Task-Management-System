@@ -82,6 +82,12 @@ Welcome to the **Task Management App**, a comprehensive and user-friendly applic
 <div style="background-color: #2d2d2d; padding: 15px; border-radius: 8px;">
   <img src="public/screenshot-2.png" alt="Task Management App Screenshot" style="max-width: 100%; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);"/>
 </div>
+<div style="background-color: #2d2d2d; padding: 15px; border-radius: 8px;">
+  <img src="public/screenshot-3.png" alt="Task Management App Screenshot" style="max-width: 100%; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);"/>
+</div>
+<div style="background-color: #2d2d2d; padding: 15px; border-radius: 8px;">
+  <img src="public/screenshot-4.png" alt="Task Management App Screenshot" style="max-width: 100%; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);"/>
+</div>
 ---
 
 ## 🛠️ Technologies Used
